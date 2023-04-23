@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.metersphere.testin.dao.TestPlanTestinTaskDao">
+
+    <resultMap type="io.metersphere.testin.entity.TestPlanTestinTask" id="TestPlanTestinTaskMap">
+        <result property="testPlanId" column="test_plan_id" jdbcType="VARCHAR"/>
+        <result property="taskid" column="taskid" jdbcType="VARCHAR"/>
+        <result property="testInProjectid" column="test_in_projectid" jdbcType="INTEGER"/>
+        <result property="execStandard" column="exec_standard" jdbcType="VARCHAR"/>
+        <result property="summaryinfo" column="summaryInfo" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TestPlanTestinTaskMap">
+        select test_plan_id,
+               taskid,
+               test_in_projectid,
+               exec_standard,
+               summaryInfo
+        from test_plan_testin_task
+        where = #{}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TestPlanTestinTaskMap">
+        select
+        test_plan_id, taskid, test_in_projectid, exec_standard, summaryInfo
+        from test_plan_testin_task
+        <where>
+            <if test="testPlanId != null and testPlanId != ''">
+                and test_plan_id = #{testPlanId}
+            </if>
+            <if test="taskid != null and taskid != ''">
+                and taskid = #{taskid}
+            </if>
+            <if test="testInProjectid != null">
+                and test_in_projectid = #{testInProjectid}
+            </if>
+            <if test="execStandard != null and execStandard != ''">
+                and exec_standard = #{execStandard}
+            </if>
+            <if test="summaryinfo != null and summaryinfo != ''">
+                and summaryInfo = #{summaryinfo}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from test_plan_testin_task
+        <where>
+            <if test="testPlanId != null and testPlanId != ''">
+                and test_plan_id = #{testPlanId}
+            </if>
+            <if test="taskid != null and taskid != ''">
+                and taskid = #{taskid}
+            </if>
+            <if test="testInProjectid != null">
+                and test_in_projectid = #{testInProjectid}
+            </if>
+            <if test="execStandard != null and execStandard != ''">
+                and exec_standard = #{execStandard}
+            </if>
+            <if test="summaryinfo != null and summaryinfo != ''">
+                and summaryInfo = #{summaryinfo}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="" useGeneratedKeys="true">
+        insert into test_plan_testin_task(test_plan_id, taskid, test_in_projectid, exec_standard, summaryInfo)
+        values (#{testPlanId}, #{taskid}, #{testInProjectid}, #{execStandard}, #{summaryinfo})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="" useGeneratedKeys="true">
+        insert into test_plan_testin_task(test_plan_id, taskid, test_in_projectid, exec_standard, summaryInfo)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.testPlanId}, #{entity.taskid}, #{entity.testInProjectid}, #{entity.execStandard},
+            #{entity.summaryinfo})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="" useGeneratedKeys="true">
+        insert into test_plan_testin_task(test_plan_id, taskid, test_in_projectid, exec_standard, summaryInfo)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.testPlanId}, #{entity.taskid}, #{entity.testInProjectid}, #{entity.execStandard},
+            #{entity.summaryinfo})
+        </foreach>
+        on duplicate key update
+        test_plan_id = values(test_plan_id),
+        taskid = values(taskid),
+        test_in_projectid = values(test_in_projectid),
+        exec_standard = values(exec_standard),
+        summaryInfo = values(summaryInfo)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update test_plan_testin_task
+        <set>
+            <if test="testPlanId != null and testPlanId != ''">
+                test_plan_id = #{testPlanId},
+            </if>
+            <if test="taskid != null and taskid != ''">
+                taskid = #{taskid},
+            </if>
+            <if test="testInProjectid != null">
+                test_in_projectid = #{testInProjectid},
+            </if>
+            <if test="execStandard != null and execStandard != ''">
+                exec_standard = #{execStandard},
+            </if>
+            <if test="summaryinfo != null and summaryinfo != ''">
+                summaryInfo = #{summaryinfo},
+            </if>
+        </set>
+        where = #{}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from test_plan_testin_task
+        where = #{}
+    </delete>
+
+</mapper>
+

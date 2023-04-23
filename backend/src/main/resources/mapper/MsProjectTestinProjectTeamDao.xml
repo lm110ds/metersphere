@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.metersphere.testin.dao.MsProjectTestinProjectTeamDao">
+
+    <resultMap type="io.metersphere.testin.entity.MsProjectTestinProjectTeam" id="MsProjectTestinProjectTeamMap">
+        <result property="msProjectId" column="ms_project_id" jdbcType="VARCHAR"/>
+        <result property="testInProjectId" column="test_in_project_id" jdbcType="VARCHAR"/>
+        <result property="eid" column="eid" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="thirdPartyProjectid" column="third_party_projectid" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="MsProjectTestinProjectTeamMap">
+        select ms_project_id,
+               test_in_project_id,
+               eid,
+               name,
+               third_party_projectid,
+               status,
+               create_time
+        from ms_project_testin_project_team
+        where = #{}
+    </select>
+    <select id="queryIsHaveTestInProjectTeamByIdMsProject" resultMap="MsProjectTestinProjectTeamMap">
+        select ms_project_id,
+               test_in_project_id,
+               eid,
+               name,
+               third_party_projectid,
+               status,
+               create_time
+        from ms_project_testin_project_team
+        where ms_project_id = #{msProjectId,jdbcType=VARCHAR}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="MsProjectTestinProjectTeamMap">
+        select
+        ms_project_id, test_in_project_id, eid, name, third_party_projectid, status, create_time
+        from ms_project_testin_project_team
+        <where>
+            <if test="msProjectId != null and msProjectId != ''">
+                and ms_project_id = #{msProjectId}
+            </if>
+            <if test="testInProjectId != null and testInProjectId != ''">
+                and test_in_project_id = #{testInProjectId}
+            </if>
+            <if test="eid != null">
+                and eid = #{eid}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="thirdPartyProjectid != null and thirdPartyProjectid != ''">
+                and third_party_projectid = #{thirdPartyProjectid}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAll" resultMap="MsProjectTestinProjectTeamMap">
+        select
+        ms_project_id, test_in_project_id, eid, name, third_party_projectid, status, create_time
+        from ms_project_testin_project_team
+        <where>
+            <if test="msProjectId != null and msProjectId != ''">
+                and ms_project_id = #{msProjectId}
+            </if>
+            <if test="testInProjectId != null and testInProjectId != ''">
+                and test_in_project_id = #{testInProjectId}
+            </if>
+            <if test="eid != null">
+                and eid = #{eid}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="thirdPartyProjectid != null and thirdPartyProjectid != ''">
+                and third_party_projectid = #{thirdPartyProjectid}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+        </where>
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from ms_project_testin_project_team
+        <where>
+            <if test="msProjectId != null and msProjectId != ''">
+                and ms_project_id = #{msProjectId}
+            </if>
+            <if test="testInProjectId != null and testInProjectId != ''">
+                and test_in_project_id = #{testInProjectId}
+            </if>
+            <if test="eid != null">
+                and eid = #{eid}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="thirdPartyProjectid != null and thirdPartyProjectid != ''">
+                and third_party_projectid = #{thirdPartyProjectid}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="" useGeneratedKeys="true">
+        insert into ms_project_testin_project_team(ms_project_id, test_in_project_id, eid, name, third_party_projectid,
+                                                   status, create_time)
+        values (#{msProjectId}, #{testInProjectId}, #{eid}, #{name}, #{thirdPartyProjectid}, #{status}, #{createTime})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="" useGeneratedKeys="true">
+        insert into ms_project_testin_project_team(ms_project_id, test_in_project_id, eid, name, third_party_projectid,
+        status, create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.msProjectId}, #{entity.testInProjectId}, #{entity.eid}, #{entity.name},
+            #{entity.thirdPartyProjectid}, #{entity.status}, #{entity.createTime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="" useGeneratedKeys="true">
+        insert into ms_project_testin_project_team(ms_project_id, test_in_project_id, eid, name, third_party_projectid,
+        status, create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.msProjectId}, #{entity.testInProjectId}, #{entity.eid}, #{entity.name},
+            #{entity.thirdPartyProjectid}, #{entity.status}, #{entity.createTime})
+        </foreach>
+        on duplicate key update
+        ms_project_id = values(ms_project_id),
+        test_in_project_id = values(test_in_project_id),
+        eid = values(eid),
+        name = values(name),
+        third_party_projectid = values(third_party_projectid),
+        status = values(status),
+        create_time = values(create_time)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update ms_project_testin_project_team
+        <set>
+            <if test="msProjectId != null and msProjectId != ''">
+                ms_project_id = #{msProjectId},
+            </if>
+            <if test="testInProjectId != null and testInProjectId != ''">
+                test_in_project_id = #{testInProjectId},
+            </if>
+            <if test="eid != null">
+                eid = #{eid},
+            </if>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="thirdPartyProjectid != null and thirdPartyProjectid != ''">
+                third_party_projectid = #{thirdPartyProjectid},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+        </set>
+        where = #{}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from ms_project_testin_project_team
+        where = #{}
+    </delete>
+
+</mapper>
+
