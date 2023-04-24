@@ -321,7 +321,7 @@ public class TestInApiExecutor {
         return result;
     }
 
-    public String ObtainTheUserTokenForTheTestInSystem(Integer testInProjectId, EmailDto emailDto) {
+    public String ObtainTheUserTokenForTheTestInSystem(Integer testInProjectId, String email) {
         QueryObtainUserTokenRequestTestinDto queryObtainUserTokenRequestTestinDto = QueryObtainUserTokenRequestTestinDto.builder()
                 .apikey("cae1bfe07371a3da0bc09c3cd9c00b14")
                 .mkey("UserManager")
@@ -331,7 +331,7 @@ public class TestInApiExecutor {
                                 .builder()
                                 .onlineUserInfo(
                                         QueryObtainUserTokenRequestTestinDto.OnlineUserInfo.builder()
-                                                .email(getEmailFromMs())
+                                                .email(StringUtils.isNotBlank(email) ?email:getEmailFromMs())
                                                 .projectid(testInProjectId)
                                                 .build()
                                 )
@@ -405,8 +405,8 @@ public class TestInApiExecutor {
         return reqId;
     }
 
-    public Object queryToObtainTheExecutionDetailsOfTheTestingReport(Integer goPage, Integer pageSize, ToObtainTheExecutionDetailsOfTheTestingReportGenerateDto toObtainTheExecutionDetailsOfTheTestingReportGenerateDto) {
-        String token = ObtainTheUserTokenForTheTestInSystem(toObtainTheExecutionDetailsOfTheTestingReportGenerateDto.getProjectid(), EmailDto.builder().email(toObtainTheExecutionDetailsOfTheTestingReportGenerateDto.getEmail()).build());
+    public List<QueryToObtainTheExecutionDetailsOfTheTestingReportGenerateBo.TestInProjectGroupTask> queryToObtainTheExecutionDetailsOfTheTestingReport(Integer goPage, Integer pageSize, ToObtainTheExecutionDetailsOfTheTestingReportGenerateDto toObtainTheExecutionDetailsOfTheTestingReportGenerateDto) {
+        String token = ObtainTheUserTokenForTheTestInSystem(toObtainTheExecutionDetailsOfTheTestingReportGenerateDto.getProjectid(), toObtainTheExecutionDetailsOfTheTestingReportGenerateDto.getEmail());
         if (StringUtils.isEmpty(token)){
             MSException.throwException("获取token异常,请稍后重试");
             return null;
@@ -440,13 +440,13 @@ public class TestInApiExecutor {
                 .timestamp(System.currentTimeMillis())
                 .build();
 //        String requestUrl = "openapi.pro.testin.cn";
-        Object response = doPostResponse(requestUrl, queryToObtainTheExecutionDetailsOfTheExecutionDetail, Object.class);
-        /*if (response.isSuccess()) {
-            QueryTheInitializationDataRequestForTheTestingTaskTestinBo.QueryTheInitializationDataRequestForTheTestingTaskTestinResultData requestTestInResultData = response.getData();
+        QueryToObtainTheExecutionDetailsOfTheTestingReportGenerateBo response = doPostResponse(requestUrl, queryToObtainTheExecutionDetailsOfTheExecutionDetail, QueryToObtainTheExecutionDetailsOfTheTestingReportGenerateBo.class);
+        if (response.isSuccess()) {
+            QueryToObtainTheExecutionDetailsOfTheTestingReportGenerateBo.RequestTestInResultData requestTestInResultData = response.getData();
             if (requestTestInResultData != null) {
-                return requestTestInResultData.getResult();
+                return requestTestInResultData.getList();
             }
-        }*/
-        return response;
+        }
+        return null;
     }
 }

@@ -8,6 +8,7 @@ import io.metersphere.commons.exception.MSException;
 import io.metersphere.commons.utils.PageUtils;
 import io.metersphere.commons.utils.Pager;
 import io.metersphere.commons.utils.ServiceUtils;
+import io.metersphere.testin.bo.QueryToObtainTheExecutionDetailsOfTheTestingReportGenerateBo;
 import io.metersphere.testin.boost.TestInApiExecutor;
 import io.metersphere.testin.dao.MsProjectTestinProjectTeamDao;
 import io.metersphere.testin.dto.faceMsFront.EmailDto;
@@ -134,7 +135,7 @@ public class TestPlanTestinTaskServiceImpl implements TestPlanTestinTaskService 
             return testPlanTestInTaskTokenReqIdCallbackUrlVo;
         }
         //找token
-        String token=testInApiExecutor.ObtainTheUserTokenForTheTestInSystem(msProjectTestinProjectTeam.getTestInProjectId(),emailDto);
+        String token=testInApiExecutor.ObtainTheUserTokenForTheTestInSystem(msProjectTestinProjectTeam.getTestInProjectId(),emailDto.getEmail());
         if (StringUtils.isEmpty(token)){
             MSException.throwException("获取token异常,请稍后重试");
             return testPlanTestInTaskTokenReqIdCallbackUrlVo;
@@ -218,7 +219,7 @@ public class TestPlanTestinTaskServiceImpl implements TestPlanTestinTaskService 
     }
 
     @Override
-    public Object listQueryToObtainTheExecutionDetailsOfTheTestingReport(Integer goPage, Integer pageSize, ToObtainTheExecutionDetailsOfTheTestingReportGenerateDto toObtainTheExecutionDetailsOfTheTestingReportGenerateDto) {
+    public List<QueryToObtainTheExecutionDetailsOfTheTestingReportGenerateBo.TestInProjectGroupTask> listQueryToObtainTheExecutionDetailsOfTheTestingReport(Integer goPage, Integer pageSize, ToObtainTheExecutionDetailsOfTheTestingReportGenerateDto toObtainTheExecutionDetailsOfTheTestingReportGenerateDto) {
         return testInApiExecutor.queryToObtainTheExecutionDetailsOfTheTestingReport(goPage, pageSize, toObtainTheExecutionDetailsOfTheTestingReportGenerateDto);
 
         /*QueryToObtainTheExecutionDetailsOfTheTestingReportDto queryToObtainTheExecutionDetailsOfTheExecutionDetail=QueryToObtainTheExecutionDetailsOfTheTestingReportDto

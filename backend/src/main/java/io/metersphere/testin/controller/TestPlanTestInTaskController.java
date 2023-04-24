@@ -3,6 +3,7 @@ package io.metersphere.testin.controller;
 import com.github.pagehelper.PageHelper;
 import io.metersphere.commons.utils.PageUtils;
 import io.metersphere.commons.utils.Pager;
+import io.metersphere.testin.bo.QueryToObtainTheExecutionDetailsOfTheTestingReportGenerateBo;
 import io.metersphere.testin.dto.faceMsFront.EmailDto;
 import io.metersphere.testin.dto.faceMsFront.MsProjectTestinProjectTeamWithEmailDto;
 import io.metersphere.testin.dto.faceMsFront.ToObtainTheExecutionDetailsOfTheTestingReportGenerateDto;
@@ -49,10 +50,10 @@ public class TestPlanTestInTaskController {
         return ResponseEntity.ok(this.testPlanTestinTaskService.queryByPage(testPlanTestinTask, pageRequest));
     }*/
     //QueryToObtainTheExecutionDetailsOfTheTestingReportDto
-    @PostMapping("/list/{goPage}/{pageSize}")
+    @PostMapping("/GetReportList/{goPage}/{pageSize}")
     //    @RequiresPermissions("PROJECT_TRACK_PLAN:READ")
 //    public Pager<List<MsProjectTestinProjectTeamCombinVo>> list(@PathVariable Integer goPage, @PathVariable Integer pageSize, @RequestBody ToObtainTheExecutionDetailsOfTheTestingReportGenerateDto toObtainTheExecutionDetailsOfTheTestingReportGenerateDto) {
-    public Pager<Object> list(@PathVariable Integer goPage, @PathVariable Integer pageSize, @RequestBody ToObtainTheExecutionDetailsOfTheTestingReportGenerateDto toObtainTheExecutionDetailsOfTheTestingReportGenerateDto) {
+    public Pager<List<QueryToObtainTheExecutionDetailsOfTheTestingReportGenerateBo.TestInProjectGroupTask>> list(@PathVariable Integer goPage, @PathVariable Integer pageSize, @RequestBody ToObtainTheExecutionDetailsOfTheTestingReportGenerateDto toObtainTheExecutionDetailsOfTheTestingReportGenerateDto) {
         com.github.pagehelper.Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, testPlanTestinTaskService.listQueryToObtainTheExecutionDetailsOfTheTestingReport(goPage,pageSize,toObtainTheExecutionDetailsOfTheTestingReportGenerateDto));
     }
@@ -77,7 +78,7 @@ public class TestPlanTestInTaskController {
         return ResponseEntity.ok(this.testPlanTestinTaskService.insert(testPlanTestinTask));
     }*/
     @PostMapping("/startTheTestInTask/{testPlanId}")
-    public ResponseEntity StartTheTestInTask(@PathVariable String testPlanId, @Valid @RequestBody EmailDto emailDto) {
+    public ResponseEntity StartTheTestInTask(@PathVariable String testPlanId, @RequestBody EmailDto emailDto) {
 //        return ResponseEntity.ok(this.testPlanTestinTaskService.insert(testPlanTestinTask));
         TestPlanTestInTaskTokenReqIdCallbackUrlVo testPlanTestInTaskTokenReqIdCallbackUrlVo = this.testPlanTestinTaskService.getTestPlanTestInTaskTokenReqIdCallbackUrlVo(testPlanId,emailDto);
         if (testPlanTestInTaskTokenReqIdCallbackUrlVo != null) {
