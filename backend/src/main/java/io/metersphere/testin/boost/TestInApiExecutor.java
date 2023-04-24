@@ -2,6 +2,8 @@ package io.metersphere.testin.boost;
 
 import com.alibaba.fastjson.JSON;
 import io.metersphere.commons.exception.MSException;
+import io.metersphere.dto.UserDTO;
+import io.metersphere.service.UserService;
 import io.metersphere.testin.bo.*;
 import io.metersphere.testin.dao.TestCaseScriptInformationDao;
 import io.metersphere.testin.dto.BaseDto;
@@ -64,6 +66,8 @@ public class TestInApiExecutor {
     @Lazy
     private TestPlanTestinTaskService testPlanTestinTaskService;
 
+    @Resource
+    private UserService userService;
 /*
     public OfficialApiResponse genAddContactAct(ExternalContactBO externalContactBO, String corpId) {
         String secretId = genExternalSecretId(corpId);
@@ -148,8 +152,17 @@ public class TestInApiExecutor {
 //        log4GetResult(logComment, url, paramMap, result, System.currentTimeMillis() - begin);
         return genResponse(result, classOfT);
     }
-
+    public String getEmailFromMs(){
+        UserDTO admin = userService.getUserInfo("admin");
+        if (StringUtils.isBlank(admin.getEmail())) {
+            MSException.throwException("未配置邮箱，请配置邮箱");
+            return "";
+        }
+        return admin.getEmail();
+    }
+    public static final String requestUrl = "openapi.pro.testin.cn";
     public List<MsProjectTestinProjectTeam> msProjectTestInProjectTeamsFromQueryTestIn(Integer goPage, Integer pageSize, MsProjectTestinProjectTeamWithEmailDto msProjectTestinProjectTeamWithEmailDto) {
+
         List<MsProjectTestinProjectTeam> result=new ArrayList<>();
         QueryTheListOfProjectGroupsUnderTheEnterpriseDto queryTheListOfProjectGroupsUnderTheEnterpriseDto=QueryTheListOfProjectGroupsUnderTheEnterpriseDto.
                 builder()
@@ -161,7 +174,7 @@ public class TestInApiExecutor {
                         .builder()
                                 .onlineUserInfo(
                                         QueryTheListOfProjectGroupsUnderTheEnterpriseDto.OnlineUserInfo.builder()
-                                        .email(msProjectTestinProjectTeamWithEmailDto.getEmail())
+                                        .email(StringUtils.isNotBlank(msProjectTestinProjectTeamWithEmailDto.getEmail()) ?msProjectTestinProjectTeamWithEmailDto.getEmail():getEmailFromMs())
                                         .build()
                                 )
                                 .page(goPage)
@@ -172,7 +185,7 @@ public class TestInApiExecutor {
                 .action("user")
                 .timestamp(System.currentTimeMillis())
                 .build();
-        String requestUrl = "openapi.pro.testin.cn";
+//        String requestUrl = "openapi.pro.testin.cn";
         QueryTheListOfProjectGroupsUnderTheEnterpriseBo response = doPostResponse(requestUrl, queryTheListOfProjectGroupsUnderTheEnterpriseDto, QueryTheListOfProjectGroupsUnderTheEnterpriseBo.class);
         if (response.isSuccess()) {
             QueryTheListOfProjectGroupsUnderTheEnterpriseBo.RequestTestInResultData requestTestInResultData = response.getData();
@@ -199,7 +212,7 @@ public class TestInApiExecutor {
                                 .builder()
                                 .onlineUserInfo(
                                     QueryTheListOfTestingScriptsDto.OnlineUserInfo.builder()
-                                            .email(testCaseScriptInformation.getEmail())
+                                            .email(StringUtils.isNotBlank(testCaseScriptInformation.getEmail()) ?testCaseScriptInformation.getEmail():getEmailFromMs())
                                     .build()
                                 )
                                 .scriptDesc(StringUtils.isNotEmpty(testCaseScriptInformation.getScriptCreateDesc())?testCaseScriptInformation.getScriptCreateDesc():null)
@@ -210,7 +223,7 @@ public class TestInApiExecutor {
                 )
                 .action("script")
                 .build();
-        String requestUrl = "openapi.pro.testin.cn";
+//        String requestUrl = "openapi.pro.testin.cn";
         return GetQueryTestCaseScriptInformationFromQueryTestInUrl(requestUrl, queryTheListOfTestingScriptsDto, QueryTestInScriptListParameterDataBo.class);
         //范例改到表格上
         /*QueryTestInScriptListParameterDataBo response = doPostResponse(requestUrl, queryTheListOfTestingScriptsDto, QueryTestInScriptListParameterDataBo.class);
@@ -318,7 +331,7 @@ public class TestInApiExecutor {
                                 .builder()
                                 .onlineUserInfo(
                                         QueryObtainUserTokenRequestTestinDto.OnlineUserInfo.builder()
-                                                .email(emailDto.getEmail())
+                                                .email(getEmailFromMs())
                                                 .projectid(testInProjectId)
                                                 .build()
                                 )
@@ -327,7 +340,7 @@ public class TestInApiExecutor {
                 .action("user")
                 .timestamp(System.currentTimeMillis())
                 .build();
-        String requestUrl = "openapi.pro.testin.cn";
+//        String requestUrl = "openapi.pro.testin.cn";
         QueryObtainUserTokenRequestTestinResultBo response = doPostResponse(requestUrl, queryObtainUserTokenRequestTestinDto, QueryObtainUserTokenRequestTestinResultBo.class);
         if (response.isSuccess()) {
             QueryObtainUserTokenRequestTestinResultBo.RequestTestInResultData requestTestInResultData = response.getData();
@@ -374,14 +387,14 @@ public class TestInApiExecutor {
                                 .extendedChannel("yiqiMS")
                                 .scripts(scriptsList)
                                 .onlineUserInfo(QueryTheInitializationDataRequestForTheTestingTaskTestinDto.OnlineUserInfo.builder()
-                                        .email(emailDto.getEmail())
+                                        .email(StringUtils.isNotBlank(emailDto.getEmail()) ?emailDto.getEmail():getEmailFromMs())
                                         .build())
                                 .build()
                 )
                 .action("user")
                 .timestamp(System.currentTimeMillis())
                 .build();
-        String requestUrl = "openapi.pro.testin.cn";
+//        String requestUrl = "openapi.pro.testin.cn";
         QueryTheInitializationDataRequestForTheTestingTaskTestinBo response = doPostResponse(requestUrl, queryTheInitializationDataRequestForTheTestingTaskTestinDto, QueryTheInitializationDataRequestForTheTestingTaskTestinBo.class);
         if (response.isSuccess()) {
             QueryTheInitializationDataRequestForTheTestingTaskTestinBo.QueryTheInitializationDataRequestForTheTestingTaskTestinResultData requestTestInResultData = response.getData();
@@ -419,14 +432,14 @@ public class TestInApiExecutor {
                                 .page(goPage)
                                 .pageSize(pageSize)
                                 .onlineUserInfo(QueryToObtainTheExecutionDetailsOfTheTestingReportDto.OnlineUserInfo.builder()
-                                        .email(toObtainTheExecutionDetailsOfTheTestingReportGenerateDto.getEmail())
+                                        .email(StringUtils.isNotBlank(toObtainTheExecutionDetailsOfTheTestingReportGenerateDto.getEmail()) ?toObtainTheExecutionDetailsOfTheTestingReportGenerateDto.getEmail():getEmailFromMs())
                                         .build())
                                 .build()
                 )
                 .action("analysis")
                 .timestamp(System.currentTimeMillis())
                 .build();
-        String requestUrl = "openapi.pro.testin.cn";
+//        String requestUrl = "openapi.pro.testin.cn";
         Object response = doPostResponse(requestUrl, queryToObtainTheExecutionDetailsOfTheExecutionDetail, Object.class);
         /*if (response.isSuccess()) {
             QueryTheInitializationDataRequestForTheTestingTaskTestinBo.QueryTheInitializationDataRequestForTheTestingTaskTestinResultData requestTestInResultData = response.getData();
