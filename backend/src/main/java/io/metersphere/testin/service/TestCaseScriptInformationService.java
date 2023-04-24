@@ -23,7 +23,7 @@ public interface TestCaseScriptInformationService {
      * @return 实例对象
      */
     TestCaseScriptInformation queryById();
-
+    TestCaseScriptInformation queryTestCaseScriptInformationByTestCaseId(String testCaseId);
     /**
      * 分页查询
      *

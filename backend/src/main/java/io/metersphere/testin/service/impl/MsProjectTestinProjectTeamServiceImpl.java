@@ -26,7 +26,8 @@ import java.util.List;
 @Service("msProjectTestinProjectTeamService")
 public class MsProjectTestinProjectTeamServiceImpl implements MsProjectTestinProjectTeamService {
     @Resource
-    private MsProjectTestinProjectTeamDao msProjectTestinProjectTeamDao;
+    private
+    MsProjectTestinProjectTeamDao msProjectTestinProjectTeamDao;
     @Resource
     private TestInApiExecutor testInApiExecutor;
 

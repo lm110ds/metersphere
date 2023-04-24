@@ -45,12 +45,16 @@ public class TestCaseScriptInformationServiceImpl implements TestCaseScriptInfor
     /**
      * 通过ID查询单条数据
      *
-     * @param 主键
      * @return 实例对象
      */
     @Override
     public TestCaseScriptInformation queryById() {
         return this.testCaseScriptInformationDao.queryById();
+    }
+
+    @Override
+    public TestCaseScriptInformation queryTestCaseScriptInformationByTestCaseId(String testCaseId) {
+        return this.testCaseScriptInformationDao.queryTestCaseScriptInformationByTestCaseId(testCaseId);
     }
 
     /**

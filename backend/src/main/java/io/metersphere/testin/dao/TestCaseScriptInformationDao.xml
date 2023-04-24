@@ -32,7 +32,7 @@
                script_create_time,
                script_update_time
         from test_case_script_information
-        where = #{}
+        where test_case_id = #{testCaseId,jdbcType=VARCHAR}
     </select>
     <select id="queryTestCaseScriptInformationByTestCaseId" resultMap="TestCaseScriptInformationMap">
         select test_case_id,

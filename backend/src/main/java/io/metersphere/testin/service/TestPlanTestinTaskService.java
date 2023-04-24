@@ -1,10 +1,14 @@
 package io.metersphere.testin.service;
 
 import io.metersphere.testin.dto.faceMsFront.EmailDto;
+import io.metersphere.testin.dto.faceMsFront.ToObtainTheExecutionDetailsOfTheTestingReportGenerateDto;
+import io.metersphere.testin.dto.faceTestInFront.CallBackTaskTestingOrCompletionMessageRequestDto;
 import io.metersphere.testin.entity.TestPlanTestinTask;
 import io.metersphere.testin.vo.TestPlanTestInTaskTokenReqIdCallbackUrlVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+
+import java.util.List;
 
 /**
  * (TestPlanTestinTask)表服务接口
@@ -20,7 +24,7 @@ public interface TestPlanTestinTaskService {
      * @param 主键
      * @return 实例对象
      */
-    TestPlanTestinTask queryById();
+    TestPlanTestinTask queryById(String testPlanId);
 
     /**
      * 分页查询
@@ -29,6 +33,9 @@ public interface TestPlanTestinTaskService {
      * @param pageRequest        分页对象
      * @return 查询结果
      */
+
+    List<TestPlanTestinTask> queryAll(TestPlanTestinTask testPlanTestinTask);
+
     Page<TestPlanTestinTask> queryByPage(TestPlanTestinTask testPlanTestinTask, PageRequest pageRequest);
 
     /**
@@ -55,4 +62,8 @@ public interface TestPlanTestinTaskService {
     boolean deleteById();
 
     TestPlanTestInTaskTokenReqIdCallbackUrlVo getTestPlanTestInTaskTokenReqIdCallbackUrlVo(String testPlanId, EmailDto emailDto);
+
+    Object callback(CallBackTaskTestingOrCompletionMessageRequestDto callBackTaskTestingOrCompletionMessageRequestDto);
+
+    Object listQueryToObtainTheExecutionDetailsOfTheTestingReport(Integer goPage, Integer pageSize, ToObtainTheExecutionDetailsOfTheTestingReportGenerateDto toObtainTheExecutionDetailsOfTheTestingReportGenerateDto);
 }

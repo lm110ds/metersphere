@@ -18,7 +18,30 @@
                exec_standard,
                summaryInfo
         from test_plan_testin_task
-        where = #{}
+        where test_plan_id = #{testPlanId}
+    </select>
+
+    <select id="queryAll" resultMap="TestPlanTestinTaskMap">
+        select
+        test_plan_id, taskid, test_in_projectid, exec_standard, summaryInfo
+        from test_plan_testin_task
+        <where>
+            <if test="testPlanId != null and testPlanId != ''">
+                and test_plan_id = #{testPlanId}
+            </if>
+            <if test="taskid != null and taskid != ''">
+                and taskid = #{taskid}
+            </if>
+            <if test="testInProjectid != null">
+                and test_in_projectid = #{testInProjectid}
+            </if>
+            <if test="execStandard != null and execStandard != ''">
+                and exec_standard = #{execStandard}
+            </if>
+            <if test="summaryinfo != null and summaryinfo != ''">
+                and summaryInfo = #{summaryinfo}
+            </if>
+        </where>
     </select>
 
     <!--查询指定行数据-->
@@ -119,14 +142,14 @@
                 summaryInfo = #{summaryinfo},
             </if>
         </set>
-        where = #{}
+        where test_plan_id = #{testPlanId}
     </update>
 
     <!--通过主键删除-->
     <delete id="deleteById">
         delete
         from test_plan_testin_task
-        where = #{}
+        where test_plan_id = #{testPlanId}
     </delete>
 
 </mapper>

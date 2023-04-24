@@ -22,7 +22,7 @@
                status,
                create_time
         from ms_project_testin_project_team
-        where = #{}
+        where ms_project_id = #{msProjectId,jdbcType=VARCHAR}
     </select>
     <select id="queryIsHaveTestInProjectTeamByIdMsProject" resultMap="MsProjectTestinProjectTeamMap">
         select ms_project_id,
@@ -187,14 +187,14 @@
                 create_time = #{createTime},
             </if>
         </set>
-        where = #{}
+        where ms_project_id = #{msProjectId}
     </update>
 
     <!--通过主键删除-->
     <delete id="deleteById">
         delete
         from ms_project_testin_project_team
-        where = #{}
+        where ms_project_id = #{msProjectId}
     </delete>
 
 </mapper>

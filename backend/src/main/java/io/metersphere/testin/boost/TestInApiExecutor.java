@@ -1,17 +1,20 @@
 package io.metersphere.testin.boost;
 
+import com.alibaba.fastjson.JSON;
+import io.metersphere.commons.exception.MSException;
 import io.metersphere.testin.bo.*;
 import io.metersphere.testin.dao.TestCaseScriptInformationDao;
 import io.metersphere.testin.dto.BaseDto;
 import io.metersphere.testin.dto.faceMsFront.EmailDto;
 import io.metersphere.testin.dto.faceMsFront.MsProjectTestinProjectTeamWithEmailDto;
 import io.metersphere.testin.dto.faceMsFront.TestCaseScriptInformationWithEmailDto;
-import io.metersphere.testin.dto.faceTestInFront.QueryObtainUserTokenRequestTestinDto;
-import io.metersphere.testin.dto.faceTestInFront.QueryTheInitializationDataRequestForTheTestingTaskTestinDto;
-import io.metersphere.testin.dto.faceTestInFront.QueryTheListOfProjectGroupsUnderTheEnterpriseDto;
-import io.metersphere.testin.dto.faceTestInFront.QueryTheListOfTestingScriptsDto;
+import io.metersphere.testin.dto.faceMsFront.ToObtainTheExecutionDetailsOfTheTestingReportGenerateDto;
+import io.metersphere.testin.dto.faceTestInFront.*;
 import io.metersphere.testin.entity.MsProjectTestinProjectTeam;
 import io.metersphere.testin.entity.TestCaseScriptInformation;
+import io.metersphere.testin.entity.TestPlanTestinTask;
+import io.metersphere.testin.service.TestCaseScriptInformationService;
+import io.metersphere.testin.service.TestPlanTestinTaskService;
 import io.metersphere.testin.util.GsonUtil;
 import io.metersphere.testin.util.HttpClientUtils;
 import io.metersphere.testin.util.JackJsonUtils;
@@ -21,6 +24,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,7 +32,6 @@ import javax.annotation.Resource;
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
-
 
 @Slf4j
 @Component
@@ -55,7 +58,12 @@ public class TestInApiExecutor {
     public static final String CHAT_ID = "chatid";
     public static final String OPEN_KF_ID = "open_kfid";
     @Resource
-    private TestCaseScriptInformationDao testCaseScriptInformationDao;
+    @Lazy
+    private TestCaseScriptInformationService testCaseScriptInformationService;
+    @Resource
+    @Lazy
+    private TestPlanTestinTaskService testPlanTestinTaskService;
+
 /*
     public OfficialApiResponse genAddContactAct(ExternalContactBO externalContactBO, String corpId) {
         String secretId = genExternalSecretId(corpId);
@@ -336,7 +344,7 @@ public class TestInApiExecutor {
         //List<Integer> scriptNoListCollect = new ArrayList<>();
         List<QueryTheInitializationDataRequestForTheTestingTaskTestinDto.Scripts> scriptsList=new ArrayList<>();
         for (String caseId : caseIdListCollect) {
-            TestCaseScriptInformation testCaseScriptInformation = testCaseScriptInformationDao.queryTestCaseScriptInformationByTestCaseId(caseId);
+            TestCaseScriptInformation testCaseScriptInformation = this.testCaseScriptInformationService.queryTestCaseScriptInformationByTestCaseId(caseId);
             Integer scriptNo = testCaseScriptInformation.getScriptNo();
             //scriptNoListCollect.add(scriptNo);
             //Standard 各个参数怎么设置
@@ -382,5 +390,50 @@ public class TestInApiExecutor {
             }
         }
         return reqId;
+    }
+
+    public Object queryToObtainTheExecutionDetailsOfTheTestingReport(Integer goPage, Integer pageSize, ToObtainTheExecutionDetailsOfTheTestingReportGenerateDto toObtainTheExecutionDetailsOfTheTestingReportGenerateDto) {
+        String token = ObtainTheUserTokenForTheTestInSystem(toObtainTheExecutionDetailsOfTheTestingReportGenerateDto.getProjectid(), EmailDto.builder().email(toObtainTheExecutionDetailsOfTheTestingReportGenerateDto.getEmail()).build());
+        if (StringUtils.isEmpty(token)){
+            MSException.throwException("获取token异常,请稍后重试");
+            return null;
+        }
+        TestPlanTestinTask testPlanTestinTask = this.testPlanTestinTaskService.queryById(toObtainTheExecutionDetailsOfTheTestingReportGenerateDto.getTestPlanId());
+        String summaryinfo = testPlanTestinTask.getSummaryinfo();
+        //反序列化json
+
+        List<CallBackSendNotificationAfterTaskCompletionDto.CategorySummary> categorySummary = (List<CallBackSendNotificationAfterTaskCompletionDto.CategorySummary>) JSON.parseObject(summaryinfo);
+        List<Integer> resultCategoryListCollect = categorySummary.parallelStream().map(CallBackSendNotificationAfterTaskCompletionDto.CategorySummary::getResultCategory).collect(Collectors.toList());
+        QueryToObtainTheExecutionDetailsOfTheTestingReportDto queryToObtainTheExecutionDetailsOfTheExecutionDetail=QueryToObtainTheExecutionDetailsOfTheTestingReportDto
+                .builder()
+                .apikey("cae1bfe07371a3da0bc09c3cd9c00b14")
+                .mkey("realtest")
+                .op("Report.list")
+                .sid(token)
+                .data(
+                        QueryToObtainTheExecutionDetailsOfTheTestingReportDto.RequestTestInData
+                                .builder()
+                                .projectid(toObtainTheExecutionDetailsOfTheTestingReportGenerateDto.getProjectid())
+                                .taskid(toObtainTheExecutionDetailsOfTheTestingReportGenerateDto.getTaskid())
+                                .resultCategorys(resultCategoryListCollect)
+                                .page(goPage)
+                                .pageSize(pageSize)
+                                .onlineUserInfo(QueryToObtainTheExecutionDetailsOfTheTestingReportDto.OnlineUserInfo.builder()
+                                        .email(toObtainTheExecutionDetailsOfTheTestingReportGenerateDto.getEmail())
+                                        .build())
+                                .build()
+                )
+                .action("analysis")
+                .timestamp(System.currentTimeMillis())
+                .build();
+        String requestUrl = "openapi.pro.testin.cn";
+        Object response = doPostResponse(requestUrl, queryToObtainTheExecutionDetailsOfTheExecutionDetail, Object.class);
+        /*if (response.isSuccess()) {
+            QueryTheInitializationDataRequestForTheTestingTaskTestinBo.QueryTheInitializationDataRequestForTheTestingTaskTestinResultData requestTestInResultData = response.getData();
+            if (requestTestInResultData != null) {
+                return requestTestInResultData.getResult();
+            }
+        }*/
+        return response;
     }
 }

@@ -1,8 +1,10 @@
 package io.metersphere.testin.dao;
 
 import io.metersphere.testin.entity.MsProjectTestinProjectTeam;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -12,6 +14,7 @@ import java.util.List;
  * @author makejava
  * @since 2023-04-20 11:47:34
  */
+@Repository
 public interface MsProjectTestinProjectTeamDao {
 
     /**

@@ -1,8 +1,10 @@
 package io.metersphere.testin.dao;
 
 import io.metersphere.testin.entity.TestCaseScriptInformation;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -12,12 +14,12 @@ import java.util.List;
  * @author makejava
  * @since 2023-04-20 11:47:52
  */
+@Repository
 public interface TestCaseScriptInformationDao {
 
     /**
      * 通过ID查询单条数据
      *
-     * @param 主键
      * @return 实例对象
      */
     TestCaseScriptInformation queryById();
@@ -81,7 +83,6 @@ public interface TestCaseScriptInformationDao {
     /**
      * 通过主键删除数据
      *
-     * @param 主键
      * @param testCaseId
      * @return 影响行数
      */

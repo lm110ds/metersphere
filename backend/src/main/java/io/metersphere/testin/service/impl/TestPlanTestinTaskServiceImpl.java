@@ -1,5 +1,6 @@
 package io.metersphere.testin.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import io.metersphere.base.domain.TestPlanWithBLOBs;
 import io.metersphere.base.mapper.ext.ExtTestPlanTestCaseMapper;
@@ -10,7 +11,11 @@ import io.metersphere.commons.utils.ServiceUtils;
 import io.metersphere.testin.boost.TestInApiExecutor;
 import io.metersphere.testin.dao.MsProjectTestinProjectTeamDao;
 import io.metersphere.testin.dto.faceMsFront.EmailDto;
+import io.metersphere.testin.dto.faceMsFront.ToObtainTheExecutionDetailsOfTheTestingReportGenerateDto;
+import io.metersphere.testin.dto.faceTestInFront.CallBackTaskTestingOrCompletionMessageRequestDto;
+import io.metersphere.testin.dto.faceTestInFront.QueryToObtainTheExecutionDetailsOfTheTestingReportDto;
 import io.metersphere.testin.entity.MsProjectTestinProjectTeam;
+import io.metersphere.testin.entity.TestCaseScriptInformation;
 import io.metersphere.testin.entity.TestPlanTestinTask;
 import io.metersphere.testin.dao.TestPlanTestinTaskDao;
 import io.metersphere.testin.service.TestPlanTestinTaskService;
@@ -55,12 +60,11 @@ public class TestPlanTestinTaskServiceImpl implements TestPlanTestinTaskService 
     /**
      * 通过ID查询单条数据
      *
-     * @param 主键
      * @return 实例对象
      */
     @Override
-    public TestPlanTestinTask queryById() {
-        return this.testPlanTestinTaskDao.queryById();
+    public TestPlanTestinTask queryById(String testPlanId) {
+        return this.testPlanTestinTaskDao.queryById(testPlanId);
     }
 
     /**
@@ -74,6 +78,10 @@ public class TestPlanTestinTaskServiceImpl implements TestPlanTestinTaskService 
     public Page<TestPlanTestinTask> queryByPage(TestPlanTestinTask testPlanTestinTask, PageRequest pageRequest) {
         long total = this.testPlanTestinTaskDao.count(testPlanTestinTask);
         return new PageImpl<>(this.testPlanTestinTaskDao.queryAllByLimit(testPlanTestinTask, pageRequest), pageRequest, total);
+    }
+    @Override
+    public List<TestPlanTestinTask> queryAll(TestPlanTestinTask testPlanTestinTask) {
+        return this.testPlanTestinTaskDao.queryAll(testPlanTestinTask);
     }
 
     /**
@@ -97,7 +105,7 @@ public class TestPlanTestinTaskServiceImpl implements TestPlanTestinTaskService 
     @Override
     public TestPlanTestinTask update(TestPlanTestinTask testPlanTestinTask) {
         this.testPlanTestinTaskDao.update(testPlanTestinTask);
-        return this.queryById();
+        return this.queryById(testPlanTestinTask.getTestPlanId());
     }
 
     /**
@@ -132,21 +140,92 @@ public class TestPlanTestinTaskServiceImpl implements TestPlanTestinTaskService 
             return testPlanTestInTaskTokenReqIdCallbackUrlVo;
         }
         //生成任务
-        String callbackUrl="https";
+        String callbackUrl="https://10.245.9.13:8443/testPlanTestInTask/callback";
         String reqId=testInApiExecutor.InitiateDataRequestForTestingTaskTestin(testPlanId,callbackUrl,testPlanCaseDTOList,emailDto,token,msProjectTestinProjectTeam);
         TestPlanTestinTask testPlanTestinTask =new TestPlanTestinTask();
         if (StringUtils.isNotBlank(reqId)) {
             testPlanTestinTask.setTestPlanId(testPlanId);
             testPlanTestinTask.setTaskid(reqId);
             //先查询，如果有则更新，否则 insert
-            //如果更新成功或者insert成功
+            List<TestPlanTestinTask> testPlanTestinTasks = this.testPlanTestinTaskDao.queryAll(testPlanTestinTask);
+            if (CollectionUtils.isNotEmpty(testPlanTestinTasks)){   //如果更新成功 return
+                if(this.testPlanTestinTaskDao.update(testPlanTestinTask)>0){
+                    testPlanTestInTaskTokenReqIdCallbackUrlVo.setReqId(reqId);
+                    testPlanTestInTaskTokenReqIdCallbackUrlVo.setToken(token);
+                    return testPlanTestInTaskTokenReqIdCallbackUrlVo;
+                }
+            }
+            //如果insert成功 return
             if(this.testPlanTestinTaskDao.insert(testPlanTestinTask)>0){
                 testPlanTestInTaskTokenReqIdCallbackUrlVo.setReqId(reqId);
                 testPlanTestInTaskTokenReqIdCallbackUrlVo.setToken(token);
+                return testPlanTestInTaskTokenReqIdCallbackUrlVo;
             }
         }
         // 成功 保存任务_计划 return token reqId
         return testPlanTestInTaskTokenReqIdCallbackUrlVo;
+    }
+
+    @Override
+    public Object callback(CallBackTaskTestingOrCompletionMessageRequestDto callBackTaskTestingOrCompletionMessageRequestDto) {
+        CallBackTaskTestingOrCompletionMessageRequestDto.Content content = callBackTaskTestingOrCompletionMessageRequestDto.getContent();
+        String taskid = callBackTaskTestingOrCompletionMessageRequestDto.getTaskid();
+        String planId = callBackTaskTestingOrCompletionMessageRequestDto.getAdditionalInfo();
+        Integer projectid = callBackTaskTestingOrCompletionMessageRequestDto.getProjectid();
+
+        TestPlanTestinTask testPlanTestinTask=new TestPlanTestinTask();
+        if (StringUtils.isNotBlank(planId)){
+            testPlanTestinTask.setTestPlanId(planId);
+        }
+        testPlanTestinTask.setTaskid(taskid);
+
+        if (callBackTaskTestingOrCompletionMessageRequestDto.getAction().equals("createTask")) {
+            String execStandard = content.getExecStandard();
+            // 查询是否存在，如果存在则更新
+
+            List<TestPlanTestinTask> testPlanTestinTasks = this.testPlanTestinTaskDao.queryAll(testPlanTestinTask);
+            if (CollectionUtils.isNotEmpty(testPlanTestinTasks)){   //如果更新成功 return
+                TestPlanTestinTask testPlanTestInTaskFromDb = testPlanTestinTasks.get(0);
+                testPlanTestInTaskFromDb.setTestInProjectid(projectid);
+                testPlanTestInTaskFromDb.setExecStandard(execStandard);
+                if (StringUtils.isNotBlank(planId)){
+                    testPlanTestinTask.setTestPlanId(planId);
+                }
+                if(this.testPlanTestinTaskDao.update(testPlanTestInTaskFromDb)>0){
+                    // 是否是执行获取报告存一份 获取报告执行明细 是分页的
+                    return true;
+                }
+            }
+        }
+        if (callBackTaskTestingOrCompletionMessageRequestDto.getAction().equals("complete")) {
+            List<CallBackTaskTestingOrCompletionMessageRequestDto.CategorySummary> categorySummary = content.getSummaryInfo().getCategorySummary();
+            // 查询是否存在，如果存在则更新
+            //如果完成，更新报告->最后一个接口请求报告明细，可以放单独某个字段下或者其他分表细表里面
+            List<TestPlanTestinTask> testPlanTestinTasks = this.testPlanTestinTaskDao.queryAll(testPlanTestinTask);
+            if (CollectionUtils.isNotEmpty(testPlanTestinTasks)){   //如果更新成功 return
+                TestPlanTestinTask testPlanTestInTaskFromDb = testPlanTestinTasks.get(0);
+                testPlanTestInTaskFromDb.setTestInProjectid(projectid);
+                testPlanTestInTaskFromDb.setSummaryinfo(JSON.toJSONString(categorySummary));
+                if (StringUtils.isNotBlank(planId)){
+                    testPlanTestinTask.setTestPlanId(planId);
+                }
+                if(this.testPlanTestinTaskDao.update(testPlanTestInTaskFromDb)>0){
+                    return true;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Object listQueryToObtainTheExecutionDetailsOfTheTestingReport(Integer goPage, Integer pageSize, ToObtainTheExecutionDetailsOfTheTestingReportGenerateDto toObtainTheExecutionDetailsOfTheTestingReportGenerateDto) {
+        return testInApiExecutor.queryToObtainTheExecutionDetailsOfTheTestingReport(goPage, pageSize, toObtainTheExecutionDetailsOfTheTestingReportGenerateDto);
+
+        /*QueryToObtainTheExecutionDetailsOfTheTestingReportDto queryToObtainTheExecutionDetailsOfTheExecutionDetail=QueryToObtainTheExecutionDetailsOfTheTestingReportDto
+                .builder()
+                .
+                .build();
+        return null;*/
     }
 
     public MsProjectTestinProjectTeam HasTheProjectToWhichTheTestPlanBelongsAlreadyBeenAssociatedWithTheTestinProjectGroup(String testPlanId) {

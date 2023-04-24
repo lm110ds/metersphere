@@ -1,8 +1,10 @@
 package io.metersphere.testin.dao;
 
 import io.metersphere.testin.entity.TestPlanTestinTask;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -12,6 +14,7 @@ import java.util.List;
  * @author makejava
  * @since 2023-04-20 11:47:53
  */
+@Repository
 public interface TestPlanTestinTaskDao {
 
     /**
@@ -20,7 +23,7 @@ public interface TestPlanTestinTaskDao {
      * @param 主键
      * @return 实例对象
      */
-    TestPlanTestinTask queryById();
+    TestPlanTestinTask queryById(String testPlanId);
 
     /**
      * 查询指定行数据
@@ -29,6 +32,8 @@ public interface TestPlanTestinTaskDao {
      * @param pageable           分页对象
      * @return 对象列表
      */
+    List<TestPlanTestinTask> queryAll(TestPlanTestinTask testPlanTestinTask);
+
     List<TestPlanTestinTask> queryAllByLimit(TestPlanTestinTask testPlanTestinTask, @Param("pageable") Pageable pageable);
 
     /**

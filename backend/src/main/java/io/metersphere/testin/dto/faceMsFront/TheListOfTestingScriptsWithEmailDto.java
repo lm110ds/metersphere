@@ -1,7 +1,7 @@
 package io.metersphere.testin.dto.faceMsFront;
 
 import com.google.gson.annotations.SerializedName;
-import io.metersphere.testin.bo.BaseBo;
+import io.metersphere.testin.dto.BaseDto;
 import lombok.*;
 
 
@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TheListOfTestingScriptsWithEmailDto extends BaseBo {
+public class TheListOfTestingScriptsWithEmailDto extends BaseDto {
     //2.2 test ms front
     private String apikey;
 
