@@ -11,6 +11,7 @@ import io.metersphere.commons.utils.ServiceUtils;
 import io.metersphere.testin.bo.QueryToObtainTheExecutionDetailsOfTheTestingReportGenerateBo;
 import io.metersphere.testin.boost.TestInApiExecutor;
 import io.metersphere.testin.dao.MsProjectTestinProjectTeamDao;
+import io.metersphere.testin.dao.TestCaseScriptInformationDao;
 import io.metersphere.testin.dto.faceMsFront.EmailDto;
 import io.metersphere.testin.dto.faceMsFront.ToObtainTheExecutionDetailsOfTheTestingReportGenerateDto;
 import io.metersphere.testin.dto.faceTestInFront.CallBackTaskTestingOrCompletionMessageRequestDto;
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -53,6 +55,8 @@ public class TestPlanTestinTaskServiceImpl implements TestPlanTestinTaskService 
     private ExtTestPlanTestCaseMapper extTestPlanTestCaseMapper;
     @Resource
     private MsProjectTestinProjectTeamDao msProjectTestinProjectTeamDao;
+    @Resource
+    private TestCaseScriptInformationDao testCaseScriptInformationDao;
     @Resource
     TestPlanTestCaseService testPlanTestCaseService;
     @Resource
@@ -211,6 +215,20 @@ public class TestPlanTestinTaskServiceImpl implements TestPlanTestinTaskService 
                     testPlanTestinTask.setTestPlanId(planId);
                 }
                 if(this.testPlanTestinTaskDao.update(testPlanTestInTaskFromDb)>0){
+                    ToObtainTheExecutionDetailsOfTheTestingReportGenerateDto toObtainTheExecutionDetailsOfTheTestingReportGenerateDto=new ToObtainTheExecutionDetailsOfTheTestingReportGenerateDto();
+                    toObtainTheExecutionDetailsOfTheTestingReportGenerateDto.setProjectid(projectid);
+                    toObtainTheExecutionDetailsOfTheTestingReportGenerateDto.setTestPlanId(planId);
+                    toObtainTheExecutionDetailsOfTheTestingReportGenerateDto.setTaskid(taskid);
+                    List<QueryToObtainTheExecutionDetailsOfTheTestingReportGenerateBo.TestInProjectGroupTask> testInProjectGroupTasks = testInApiExecutor.queryToObtainTheExecutionDetailsOfTheTestingReport(1, Integer.MAX_VALUE - 1, toObtainTheExecutionDetailsOfTheTestingReportGenerateDto);
+                    if (CollectionUtils.isNotEmpty(testInProjectGroupTasks)) {
+                        List<TestCaseScriptInformation> list=new ArrayList<>();
+                        for (QueryToObtainTheExecutionDetailsOfTheTestingReportGenerateBo.TestInProjectGroupTask testInProjectGroupTask : testInProjectGroupTasks) {
+                            Integer scriptNo = testInProjectGroupTask.getReportScript().getScriptNo();
+                            Integer resultCategory = testInProjectGroupTask.getReportRunInfo().getStepInfo().getResultCategory();
+                            list.add(TestCaseScriptInformation.builder().scriptNo(scriptNo).resultCategory(resultCategory).build());
+                        }
+                        this.testCaseScriptInformationDao.updateBatchSelective(list);
+                    }
                     return true;
                 }
             }

@@ -77,6 +77,7 @@ public interface TestCaseScriptInformationDao {
      * @return 影响行数
      */
     int update(TestCaseScriptInformation testCaseScriptInformation);
+    int updateBatchSelective(List<TestCaseScriptInformation> list);
 
 //    MsProjectTestinProjectTeam queryIsHaveTestInProjectTeamByIdMsProject(String msProjectId);
 
