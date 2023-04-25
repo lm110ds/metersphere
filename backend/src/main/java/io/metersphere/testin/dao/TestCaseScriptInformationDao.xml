@@ -2,7 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="io.metersphere.testin.dao.TestCaseScriptInformationDao">
 
-    <resultMap type="io.metersphere.testin.entity.TestCaseScriptInformation" id="TestCaseScriptInformationMap">
+    <resultMap type="io.metersphere.testin.entity.TestCaseScriptInformation"
+               id="TestCaseScriptInformationMap">
         <result property="testCaseId" column="test_case_id" jdbcType="VARCHAR"/>
         <result property="scriptId" column="script_id" jdbcType="INTEGER"/>
         <result property="scriptNo" column="script_no" jdbcType="INTEGER"/>
@@ -16,20 +17,49 @@
         <result property="coverInstall" column="cover_install" jdbcType="INTEGER"/>
         <result property="cleanData" column="clean_data" jdbcType="INTEGER"/>
         <result property="keepApp" column="keep_app" jdbcType="INTEGER"/>
+        <result property="resultCategory" column="result_category" jdbcType="INTEGER"/>
         <result property="scriptCreateTime" column="script_create_time" jdbcType="TIMESTAMP"/>
         <result property="scriptUpdateTime" column="script_update_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <!--查询单个-->
     <select id="queryById" resultMap="TestCaseScriptInformationMap">
-        select
-          test_case_id, script_id, script_no, script_create_user, script_create_desc, test_in_project_id, script_update_userid, script_update_desc, channel_id, app_name, cover_install, clean_data, keep_app, script_create_time, script_update_time
+        select test_case_id,
+               script_id,
+               script_no,
+               script_create_user,
+               script_create_desc,
+               test_in_project_id,
+               script_update_userid,
+               script_update_desc,
+               channel_id,
+               app_name,
+               cover_install,
+               clean_data,
+               keep_app,
+               result_category,
+               script_create_time,
+               script_update_time
         from test_case_script_information
         where test_case_id = #{testCaseId,jdbcType=VARCHAR}
     </select>
     <select id="queryTestCaseScriptInformationByTestCaseId" resultMap="TestCaseScriptInformationMap">
-        select
-          test_case_id, script_id, script_no, script_create_user, script_create_desc, test_in_project_id, script_update_userid, script_update_desc, channel_id, app_name, cover_install, clean_data, keep_app, script_create_time, script_update_time
+        select test_case_id,
+               script_id,
+               script_no,
+               script_create_user,
+               script_create_desc,
+               test_in_project_id,
+               script_update_userid,
+               script_update_desc,
+               channel_id,
+               app_name,
+               cover_install,
+               clean_data,
+               keep_app,
+               result_category,
+               script_create_time,
+               script_update_time
         from test_case_script_information
         where test_case_id = #{testCaseId,jdbcType=VARCHAR}
     </select>
@@ -37,7 +67,9 @@
     <!--查询指定行数据-->
     <select id="queryAllByLimit" resultMap="TestCaseScriptInformationMap">
         select
-          test_case_id, script_id, script_no, script_create_user, script_create_desc, test_in_project_id, script_update_userid, script_update_desc, channel_id, app_name, cover_install, clean_data, keep_app, script_create_time, script_update_time
+        test_case_id, script_id, script_no, script_create_user, script_create_desc, test_in_project_id,
+        script_update_userid, script_update_desc, channel_id, app_name, cover_install, clean_data, keep_app,
+        result_category, script_create_time, script_update_time
         from test_case_script_information
         <where>
             <if test="testCaseId != null and testCaseId != ''">
@@ -78,6 +110,9 @@
             </if>
             <if test="keepApp != null">
                 and keep_app = #{keepApp}
+            </if>
+            <if test="resultCategory != null">
+                and result_category = #{resultCategory}
             </if>
             <if test="scriptCreateTime != null">
                 and script_create_time = #{scriptCreateTime}
@@ -90,7 +125,9 @@
     </select>
     <select id="queryAll" resultMap="TestCaseScriptInformationMap">
         select
-        test_case_id, script_id, script_no, script_create_user, script_create_desc, test_in_project_id, script_update_userid, script_update_desc, channel_id, app_name, cover_install, clean_data, keep_app, script_create_time, script_update_time
+        test_case_id, script_id, script_no, script_create_user, script_create_desc, test_in_project_id,
+        script_update_userid, script_update_desc, channel_id, app_name, cover_install, clean_data, keep_app,
+        result_category, script_create_time, script_update_time
         from test_case_script_information
         <where>
             <if test="testCaseId != null and testCaseId != ''">
@@ -132,6 +169,9 @@
             <if test="keepApp != null">
                 and keep_app = #{keepApp}
             </if>
+            <if test="resultCategory != null">
+                and result_category = #{resultCategory}
+            </if>
             <if test="scriptCreateTime != null">
                 and script_create_time = #{scriptCreateTime}
             </if>
@@ -139,6 +179,7 @@
                 and script_update_time = #{scriptUpdateTime}
             </if>
         </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
     </select>
     <!--统计总行数-->
     <select id="count" resultType="java.lang.Long">
@@ -184,6 +225,9 @@
             <if test="keepApp != null">
                 and keep_app = #{keepApp}
             </if>
+            <if test="resultCategory != null">
+                and result_category = #{resultCategory}
+            </if>
             <if test="scriptCreateTime != null">
                 and script_create_time = #{scriptCreateTime}
             </if>
@@ -195,23 +239,40 @@
 
     <!--新增所有列-->
     <insert id="insert" useGeneratedKeys="true">
-        insert into test_case_script_information(test_case_id, script_id, script_no, script_create_user, script_create_desc, test_in_project_id, script_update_userid, script_update_desc, channel_id, app_name, cover_install, clean_data, keep_app, script_create_time, script_update_time)
-        values (#{testCaseId}, #{scriptId}, #{scriptNo}, #{scriptCreateUser}, #{scriptCreateDesc}, #{testInProjectId}, #{scriptUpdateUserid}, #{scriptUpdateDesc}, #{channelId}, #{appName}, #{coverInstall}, #{cleanData}, #{keepApp}, #{scriptCreateTime}, #{scriptUpdateTime})
+        insert into test_case_script_information(test_case_id, script_id, script_no, script_create_user,
+                                                 script_create_desc, test_in_project_id, script_update_userid,
+                                                 script_update_desc, channel_id, app_name, cover_install, clean_data,
+                                                 keep_app, result_category, script_create_time, script_update_time)
+        values (#{testCaseId}, #{scriptId}, #{scriptNo}, #{scriptCreateUser}, #{scriptCreateDesc}, #{testInProjectId},
+                #{scriptUpdateUserid}, #{scriptUpdateDesc}, #{channelId}, #{appName}, #{coverInstall}, #{cleanData},
+                #{keepApp}, #{resultCategory}, #{scriptCreateTime}, #{scriptUpdateTime})
     </insert>
 
     <insert id="insertBatch" keyProperty="" useGeneratedKeys="true">
-        insert into test_case_script_information(test_case_id, script_id, script_no, script_create_user, script_create_desc, test_in_project_id, script_update_userid, script_update_desc, channel_id, app_name, cover_install, clean_data, keep_app, script_create_time, script_update_time)
+        insert into test_case_script_information(test_case_id, script_id, script_no, script_create_user,
+        script_create_desc, test_in_project_id, script_update_userid, script_update_desc, channel_id, app_name,
+        cover_install, clean_data, keep_app, result_category, script_create_time, script_update_time)
         values
         <foreach collection="entities" item="entity" separator=",">
-        (#{entity.testCaseId}, #{entity.scriptId}, #{entity.scriptNo}, #{entity.scriptCreateUser}, #{entity.scriptCreateDesc}, #{entity.testInProjectId}, #{entity.scriptUpdateUserid}, #{entity.scriptUpdateDesc}, #{entity.channelId}, #{entity.appName}, #{entity.coverInstall}, #{entity.cleanData}, #{entity.keepApp}, #{entity.scriptCreateTime}, #{entity.scriptUpdateTime})
+            (#{entity.testCaseId}, #{entity.scriptId}, #{entity.scriptNo}, #{entity.scriptCreateUser},
+            #{entity.scriptCreateDesc}, #{entity.testInProjectId}, #{entity.scriptUpdateUserid},
+            #{entity.scriptUpdateDesc}, #{entity.channelId}, #{entity.appName}, #{entity.coverInstall},
+            #{entity.cleanData}, #{entity.keepApp}, #{entity.resultCategory}, #{entity.scriptCreateTime},
+            #{entity.scriptUpdateTime})
         </foreach>
     </insert>
 
     <insert id="insertOrUpdateBatch" keyProperty="" useGeneratedKeys="true">
-        insert into test_case_script_information(test_case_id, script_id, script_no, script_create_user, script_create_desc, test_in_project_id, script_update_userid, script_update_desc, channel_id, app_name, cover_install, clean_data, keep_app, script_create_time, script_update_time)
+        insert into test_case_script_information(test_case_id, script_id, script_no, script_create_user,
+        script_create_desc, test_in_project_id, script_update_userid, script_update_desc, channel_id, app_name,
+        cover_install, clean_data, keep_app, result_category, script_create_time, script_update_time)
         values
         <foreach collection="entities" item="entity" separator=",">
-            (#{entity.testCaseId}, #{entity.scriptId}, #{entity.scriptNo}, #{entity.scriptCreateUser}, #{entity.scriptCreateDesc}, #{entity.testInProjectId}, #{entity.scriptUpdateUserid}, #{entity.scriptUpdateDesc}, #{entity.channelId}, #{entity.appName}, #{entity.coverInstall}, #{entity.cleanData}, #{entity.keepApp}, #{entity.scriptCreateTime}, #{entity.scriptUpdateTime})
+            (#{entity.testCaseId}, #{entity.scriptId}, #{entity.scriptNo}, #{entity.scriptCreateUser},
+            #{entity.scriptCreateDesc}, #{entity.testInProjectId}, #{entity.scriptUpdateUserid},
+            #{entity.scriptUpdateDesc}, #{entity.channelId}, #{entity.appName}, #{entity.coverInstall},
+            #{entity.cleanData}, #{entity.keepApp}, #{entity.resultCategory}, #{entity.scriptCreateTime},
+            #{entity.scriptUpdateTime})
         </foreach>
         on duplicate key update
         test_case_id = values(test_case_id),
@@ -227,6 +288,7 @@
         cover_install = values(cover_install),
         clean_data = values(clean_data),
         keep_app = values(keep_app),
+        result_category = values(result_category),
         script_create_time = values(script_create_time),
         script_update_time = values(script_update_time)
     </insert>
@@ -274,6 +336,9 @@
             <if test="keepApp != null">
                 keep_app = #{keepApp},
             </if>
+            <if test="resultCategory != null">
+                result_category = #{resultCategory},
+            </if>
             <if test="scriptCreateTime != null">
                 script_create_time = #{scriptCreateTime},
             </if>
@@ -283,10 +348,27 @@
         </set>
         where test_case_id = #{testCaseId,jdbcType=VARCHAR}
     </update>
+    <update id="updateBatchSelective" parameterType="java.util.List">
+        update test_case_script_information
+        <trim prefix="set" suffixOverrides=",">
+        <trim prefix="result_category= case" suffix="end,">
+            <foreach collection="list" index="index" item="item">
+                <if test="item.resultCategory!= null">
+                    when script_no= #{item.scriptNo,jdbcType=INTEGER} then #{item.resultCategory,jdbcType=INTEGER}
+                </if>
+            </foreach>
+        </trim>
+        where script_no in
+        <foreach close=")" collection="list" item="item" open="(" separator=", ">
+            #{item.scriptNo,jdbcType=INTEGER}
+        </foreach>
+    </update>
 
     <!--通过主键删除-->
     <delete id="deleteById">
-        delete from test_case_script_information where test_case_id = #{testCaseId,jdbcType=VARCHAR}
+        delete
+        from test_case_script_information
+        where test_case_id = #{testCaseId,jdbcType=VARCHAR}
     </delete>
 
 </mapper>
