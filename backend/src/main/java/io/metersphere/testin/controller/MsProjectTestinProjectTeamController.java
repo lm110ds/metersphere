@@ -7,12 +7,14 @@ import io.metersphere.commons.utils.Pager;
 import io.metersphere.testin.dto.faceMsFront.MsProjectTestinProjectTeamWithEmailDto;
 import io.metersphere.testin.entity.MsProjectTestinProjectTeam;
 import io.metersphere.testin.service.MsProjectTestinProjectTeamService;
+import io.metersphere.testin.util.ResponseEntity;
 import io.metersphere.testin.vo.MsProjectTestinProjectTeamCombinVo;
 import io.metersphere.track.service.TestPlanService;
+import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -45,7 +47,7 @@ public class MsProjectTestinProjectTeamController {
     public ResponseEntity<Page<MsProjectTestinProjectTeam>> queryByPage(@RequestBody MsProjectTestinProjectTeam msProjectTestinProjectTeam, PageRequest pageRequest) {
         return ResponseEntity.ok(this.msProjectTestinProjectTeamService.queryByPage(msProjectTestinProjectTeam, pageRequest));
     }*/
-
+    @ApiModelProperty("查询企业下所有项目组列表")
     @PostMapping("/list/{goPage}/{pageSize}")
 //    @RequiresPermissions("PROJECT_TRACK_PLAN:READ")
     public Pager<List<MsProjectTestinProjectTeamCombinVo>> list(@PathVariable Integer goPage, @PathVariable Integer pageSize, @RequestBody MsProjectTestinProjectTeamWithEmailDto msProjectTestinProjectTeamWithEmailDto) {
@@ -70,6 +72,8 @@ public class MsProjectTestinProjectTeamController {
      * @param msProjectTestinProjectTeam 实体
      * @return 新增结果
      */
+
+    @ApiModelProperty("关联企业下的项目组")
     @PostMapping("/add")
     public ResponseEntity add(@RequestBody MsProjectTestinProjectTeam msProjectTestinProjectTeam) {
         if (StringUtils.isBlank(msProjectTestinProjectTeam.getMsProjectId())
@@ -77,9 +81,9 @@ public class MsProjectTestinProjectTeamController {
                 ||StringUtils.isBlank(msProjectTestinProjectTeam.getName())
         )  MSException.throwException("msProjectId、testInProjectId、name不能为空");
         if (this.msProjectTestinProjectTeamService.queryIsHaveTestInProjectTeamByIdMsProject(msProjectTestinProjectTeam) != null) {
-            return ResponseEntity.badRequest().body("该ms项目关联TestIn项目组，暂时无法关联");
+            return ResponseEntity.error("该ms项目关联TestIn项目组，暂时无法关联");
         }
-        return ResponseEntity.ok(this.msProjectTestinProjectTeamService.insert(msProjectTestinProjectTeam));
+        return ResponseEntity.success("关联成功",this.msProjectTestinProjectTeamService.insert(msProjectTestinProjectTeam));
     }
 
     /**

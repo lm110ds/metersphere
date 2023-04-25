@@ -51,7 +51,26 @@ public class QueryTestInScriptListParameterDataFromExcelBo implements Serializab
         private Integer scriptUpdateUserid;
         private String scriptUpdateDesc;
         private String channelId;
-        private String appinfo;
+        private AppInfo appinfo;
+    }
+    @Data
+    @Builder
+    public static class AppInfo {
+
+        private String keypass;
+        private String appName;
+        private String packagename;
+        private int appCreateTime;
+        private String storepass;
+        private int appid;
+        private String appDesc;
+        private String versionRemark;
+        private String appKey;
+        private String fileUrl;
+        private int isdelete;
+        private String appalias;
+        private int pkgid;
+
     }
     public boolean isSuccess() {
         return Objects.equals(code, 0);

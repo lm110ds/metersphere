@@ -1,6 +1,8 @@
 package io.metersphere.testin.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
+import io.metersphere.commons.utils.LogUtil;
 import io.metersphere.commons.utils.PageUtils;
 import io.metersphere.commons.utils.Pager;
 import io.metersphere.testin.bo.QueryToObtainTheExecutionDetailsOfTheTestingReportGenerateBo;
@@ -41,8 +43,8 @@ public class TestPlanTestInTaskController {
     /**
      * 分页查询
      *
-     * @param testPlanTestinTask 筛选条件
-     * @param pageRequest        分页对象
+     * @param goPage 筛选条件
+     * @param pageSize        分页对象
      * @return 查询结果
      */
     /*@GetMapping
@@ -70,7 +72,7 @@ public class TestPlanTestInTaskController {
     /**
      * 新增数据
      *
-     * @param testPlanTestinTask 实体
+     * @param testPlanId 实体
      * @return 新增结果
      */
     /*@PostMapping
@@ -91,7 +93,8 @@ public class TestPlanTestInTaskController {
         }
     }
     @PostMapping("/callback")
-    public ResponseEntity callback(CallBackTaskTestingOrCompletionMessageRequestDto callBackTaskTestingOrCompletionMessageRequestDto) {
+    public ResponseEntity callback(@RequestBody CallBackTaskTestingOrCompletionMessageRequestDto callBackTaskTestingOrCompletionMessageRequestDto) {
+        LogUtil.info("来自testIn的回调："+JSON.toJSONString(callBackTaskTestingOrCompletionMessageRequestDto));
         return ResponseEntity.ok(this.testPlanTestinTaskService.callback(callBackTaskTestingOrCompletionMessageRequestDto));
 //        return ResponseEntity.ok(this.testPlanTestinTaskService.update(callBackTaskTestingOrCompletionMessageRequestDto));
     }

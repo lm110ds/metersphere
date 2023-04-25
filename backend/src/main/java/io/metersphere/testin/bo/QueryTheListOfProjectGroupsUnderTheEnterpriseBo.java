@@ -53,6 +53,9 @@ public class  QueryTheListOfProjectGroupsUnderTheEnterpriseBo implements Seriali
         private Integer status;
 
         private String thirdPartyProjectid;
+        private String descr;
+        private String extend;
+        private String productNo;
 
 
     }

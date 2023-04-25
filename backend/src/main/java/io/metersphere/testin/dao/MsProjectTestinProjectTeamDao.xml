@@ -10,6 +10,9 @@
         <result property="thirdPartyProjectid" column="third_party_projectid" jdbcType="VARCHAR"/>
         <result property="status" column="status" jdbcType="INTEGER"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="descr" column="descr" jdbcType="VARCHAR"/>
+        <result property="extend" column="extend" jdbcType="VARCHAR"/>
+        <result property="productNo" column="product_no" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!--查询单个-->
@@ -20,7 +23,10 @@
                name,
                third_party_projectid,
                status,
-               create_time
+               create_time,
+               descr,
+               extend,
+               product_no
         from ms_project_testin_project_team
         where ms_project_id = #{msProjectId,jdbcType=VARCHAR}
     </select>
@@ -31,7 +37,10 @@
                name,
                third_party_projectid,
                status,
-               create_time
+               create_time,
+               descr,
+               extend,
+               product_no
         from ms_project_testin_project_team
         where ms_project_id = #{msProjectId,jdbcType=VARCHAR}
     </select>
@@ -39,7 +48,8 @@
     <!--查询指定行数据-->
     <select id="queryAllByLimit" resultMap="MsProjectTestinProjectTeamMap">
         select
-        ms_project_id, test_in_project_id, eid, name, third_party_projectid, status, create_time
+        ms_project_id, test_in_project_id, eid, name, third_party_projectid, status, create_time, descr, extend,
+        product_no
         from ms_project_testin_project_team
         <where>
             <if test="msProjectId != null and msProjectId != ''">
@@ -62,15 +72,23 @@
             </if>
             <if test="createTime != null">
                 and create_time = #{createTime}
+            </if>
+            <if test="descr != null and descr != ''">
+                and descr = #{descr}
+            </if>
+            <if test="extend != null and extend != ''">
+                and extend = #{extend}
+            </if>
+            <if test="productNo != null and productNo != ''">
+                and product_no = #{productNo}
             </if>
         </where>
         limit #{pageable.offset}, #{pageable.pageSize}
     </select>
-
-    <!--查询指定行数据-->
     <select id="queryAll" resultMap="MsProjectTestinProjectTeamMap">
         select
-        ms_project_id, test_in_project_id, eid, name, third_party_projectid, status, create_time
+        ms_project_id, test_in_project_id, eid, name, third_party_projectid, status, create_time, descr, extend,
+        product_no
         from ms_project_testin_project_team
         <where>
             <if test="msProjectId != null and msProjectId != ''">
@@ -93,6 +111,15 @@
             </if>
             <if test="createTime != null">
                 and create_time = #{createTime}
+            </if>
+            <if test="descr != null and descr != ''">
+                and descr = #{descr}
+            </if>
+            <if test="extend != null and extend != ''">
+                and extend = #{extend}
+            </if>
+            <if test="productNo != null and productNo != ''">
+                and product_no = #{productNo}
             </if>
         </where>
     </select>
@@ -123,33 +150,45 @@
             <if test="createTime != null">
                 and create_time = #{createTime}
             </if>
+            <if test="descr != null and descr != ''">
+                and descr = #{descr}
+            </if>
+            <if test="extend != null and extend != ''">
+                and extend = #{extend}
+            </if>
+            <if test="productNo != null and productNo != ''">
+                and product_no = #{productNo}
+            </if>
         </where>
     </select>
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="" useGeneratedKeys="true">
         insert into ms_project_testin_project_team(ms_project_id, test_in_project_id, eid, name, third_party_projectid,
-                                                   status, create_time)
-        values (#{msProjectId}, #{testInProjectId}, #{eid}, #{name}, #{thirdPartyProjectid}, #{status}, #{createTime})
+                                                   status, create_time, descr, extend, product_no)
+        values (#{msProjectId}, #{testInProjectId}, #{eid}, #{name}, #{thirdPartyProjectid}, #{status}, #{createTime},
+                #{descr}, #{extend}, #{productNo})
     </insert>
 
     <insert id="insertBatch" keyProperty="" useGeneratedKeys="true">
         insert into ms_project_testin_project_team(ms_project_id, test_in_project_id, eid, name, third_party_projectid,
-        status, create_time)
+        status, create_time, descr, extend, product_no)
         values
         <foreach collection="entities" item="entity" separator=",">
             (#{entity.msProjectId}, #{entity.testInProjectId}, #{entity.eid}, #{entity.name},
-            #{entity.thirdPartyProjectid}, #{entity.status}, #{entity.createTime})
+            #{entity.thirdPartyProjectid}, #{entity.status}, #{entity.createTime}, #{entity.descr}, #{entity.extend},
+            #{entity.productNo})
         </foreach>
     </insert>
 
     <insert id="insertOrUpdateBatch" keyProperty="" useGeneratedKeys="true">
         insert into ms_project_testin_project_team(ms_project_id, test_in_project_id, eid, name, third_party_projectid,
-        status, create_time)
+        status, create_time, descr, extend, product_no)
         values
         <foreach collection="entities" item="entity" separator=",">
             (#{entity.msProjectId}, #{entity.testInProjectId}, #{entity.eid}, #{entity.name},
-            #{entity.thirdPartyProjectid}, #{entity.status}, #{entity.createTime})
+            #{entity.thirdPartyProjectid}, #{entity.status}, #{entity.createTime}, #{entity.descr}, #{entity.extend},
+            #{entity.productNo})
         </foreach>
         on duplicate key update
         ms_project_id = values(ms_project_id),
@@ -158,7 +197,10 @@
         name = values(name),
         third_party_projectid = values(third_party_projectid),
         status = values(status),
-        create_time = values(create_time)
+        create_time = values(create_time),
+        descr = values(descr),
+        extend = values(extend),
+        product_no = values(product_no)
     </insert>
 
     <!--通过主键修改数据-->
@@ -185,6 +227,15 @@
             </if>
             <if test="createTime != null">
                 create_time = #{createTime},
+            </if>
+            <if test="descr != null and descr != ''">
+                descr = #{descr},
+            </if>
+            <if test="extend != null and extend != ''">
+                extend = #{extend},
+            </if>
+            <if test="productNo != null and productNo != ''">
+                product_no = #{productNo},
             </if>
         </set>
         where ms_project_id = #{msProjectId}

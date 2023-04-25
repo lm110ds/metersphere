@@ -136,9 +136,9 @@ public class TestCaseScriptInformationServiceImpl implements TestCaseScriptInfor
                         .scriptUpdateUserid(testCaseScriptInformationWithEmailDto.getScriptUpdateUserid())
                         .scriptUpdateDesc(testCaseScriptInformationWithEmailDto.getScriptUpdateDesc())
                         .channelId(testCaseScriptInformationWithEmailDto.getChannelId())
-                        .appinfo(testCaseScriptInformationWithEmailDto.getAppinfo())
                         .scriptCreateTime(testCaseScriptInformationWithEmailDto.getScriptCreateTime())
                         .scriptUpdateTime(testCaseScriptInformationWithEmailDto.getScriptUpdateTime())
+                        .appName(testCaseScriptInformationWithEmailDto.getAppName())
                         .build();
                 List<TestCaseScriptInformation> msTestCaseScriptInformationFromDb = this.testCaseScriptInformationDao.queryAll(testCaseScriptInformation);
 
@@ -184,8 +184,8 @@ public class TestCaseScriptInformationServiceImpl implements TestCaseScriptInfor
 
             TestCaseScriptInformationCombinVo testCaseScriptInformationCombinVo;
 
-            if (testCaseScriptInformationFromDb.getScriptId().equals(testCaseScriptInformation.getScriptId())){
-                testCaseScriptInformationCombinVo = JackJsonUtils.obj2pojo(testCaseScriptInformationFromDb, TestCaseScriptInformationCombinVo.class);
+            if (testCaseScriptInformationFromDb.getScriptNo().equals(testCaseScriptInformation.getScriptNo())){
+                testCaseScriptInformationCombinVo = JackJsonUtils.obj2pojo(testCaseScriptInformation, TestCaseScriptInformationCombinVo.class);
                 testCaseScriptInformationCombinVo.setFlag(true);
             }else {
                 testCaseScriptInformationCombinVo = JackJsonUtils.obj2pojo(testCaseScriptInformation, TestCaseScriptInformationCombinVo.class);

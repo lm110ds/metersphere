@@ -28,6 +28,7 @@ public class QueryTheListOfProjectGroupsUnderTheEnterpriseDto extends BaseDto {
     @Data
     public static class OnlineUserInfo {
         private String email;
+        private Integer projectid;
     }
     @Builder
     @Data

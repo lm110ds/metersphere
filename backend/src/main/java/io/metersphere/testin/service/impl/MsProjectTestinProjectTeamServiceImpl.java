@@ -34,7 +34,6 @@ public class MsProjectTestinProjectTeamServiceImpl implements MsProjectTestinPro
     /**
      * 通过ID查询单条数据
      *
-     * @param 主键
      * @return 实例对象
      */
     @Override
@@ -86,7 +85,6 @@ public class MsProjectTestinProjectTeamServiceImpl implements MsProjectTestinPro
     /**
      * 通过主键删除数据
      *
-     * @param 主键
      * @return 是否成功
      */
     @Override
@@ -105,6 +103,9 @@ public class MsProjectTestinProjectTeamServiceImpl implements MsProjectTestinPro
                 .thirdPartyProjectid(msProjectTestinProjectTeamWithEmailDto.getThirdPartyProjectid())
                 .status(msProjectTestinProjectTeamWithEmailDto.getStatus())
                 .createTime(msProjectTestinProjectTeamWithEmailDto.getCreateTime())
+                .descr(msProjectTestinProjectTeamWithEmailDto.getDescr())
+                .extend(msProjectTestinProjectTeamWithEmailDto.getExtend())
+                .productNo(msProjectTestinProjectTeamWithEmailDto.getProductNo())
                 .build();
         List<MsProjectTestinProjectTeam> msProjectTestInProjectTeams = this.msProjectTestinProjectTeamDao.queryAll(msProjectTestinProjectTeam);
         List<MsProjectTestinProjectTeam> msProjectTestInProjectTeamsFromQueryTestIn = testInApiExecutor.msProjectTestInProjectTeamsFromQueryTestIn(goPage, pageSize, msProjectTestinProjectTeamWithEmailDto);
@@ -133,7 +134,7 @@ public class MsProjectTestinProjectTeamServiceImpl implements MsProjectTestinPro
         for (MsProjectTestinProjectTeam msProjectTestinProjectTeam : list) {
             MsProjectTestinProjectTeamCombinVo msProjectTestinProjectTeamCombinVo;
             if (msProjectTestInProjectTeamFromDb.getTestInProjectId().equals(msProjectTestinProjectTeam.getTestInProjectId())){
-                msProjectTestinProjectTeamCombinVo = JackJsonUtils.obj2pojo(msProjectTestInProjectTeamFromDb, MsProjectTestinProjectTeamCombinVo.class);
+                msProjectTestinProjectTeamCombinVo = JackJsonUtils.obj2pojo(msProjectTestinProjectTeam, MsProjectTestinProjectTeamCombinVo.class);
                 msProjectTestinProjectTeamCombinVo.setFlag(true);
             }else {
                 msProjectTestinProjectTeamCombinVo = JackJsonUtils.obj2pojo(msProjectTestinProjectTeam, MsProjectTestinProjectTeamCombinVo.class);

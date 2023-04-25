@@ -57,7 +57,33 @@ public class QueryTestInScriptListParameterDataBo implements Serializable {
         private Long scriptCreateTime;
         private String adapterversioncode;
         private String channelId;
-        private String appinfo;
+        private AppInfo appinfo;
+        private String scriptmain;
+        private String suiteName;
+        private String suiteId;
+        private String declareVars;
+        private Integer recordType;
+        private Integer pkgid;
+
+    }
+
+    @Data
+    @Builder
+    public static class AppInfo {
+
+        private String keypass;
+        private String appName;
+        private String packagename;
+        private int appCreateTime;
+        private String storepass;
+        private int appid;
+        private String appDesc;
+        private String versionRemark;
+        private String appKey;
+        private String fileUrl;
+        private int isdelete;
+        private String appalias;
+        private int pkgid;
 
     }
     @Data

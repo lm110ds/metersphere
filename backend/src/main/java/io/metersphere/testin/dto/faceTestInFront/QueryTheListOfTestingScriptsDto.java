@@ -38,6 +38,8 @@ public class QueryTheListOfTestingScriptsDto extends BaseDto {
         private OnlineUserInfo onlineUserInfo;
 
         private String scriptDesc;
+        private Integer scriptType;
+        private Integer scriptNo;
 
         private int startPageNo;
 

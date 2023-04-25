@@ -171,8 +171,8 @@ public class TestPlanTestinTaskServiceImpl implements TestPlanTestinTaskService 
     public Object callback(CallBackTaskTestingOrCompletionMessageRequestDto callBackTaskTestingOrCompletionMessageRequestDto) {
         CallBackTaskTestingOrCompletionMessageRequestDto.Content content = callBackTaskTestingOrCompletionMessageRequestDto.getContent();
         String taskid = callBackTaskTestingOrCompletionMessageRequestDto.getTaskid();
-        String planId = callBackTaskTestingOrCompletionMessageRequestDto.getAdditionalInfo();
-        Integer projectid = callBackTaskTestingOrCompletionMessageRequestDto.getProjectid();
+        String planId = content.getAdditionalInfo();
+        Integer projectid = content.getProjectid();
 
         TestPlanTestinTask testPlanTestinTask=new TestPlanTestinTask();
         if (StringUtils.isNotBlank(planId)){

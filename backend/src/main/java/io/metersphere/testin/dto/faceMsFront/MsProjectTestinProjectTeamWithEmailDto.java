@@ -53,6 +53,10 @@ public class MsProjectTestinProjectTeamWithEmailDto implements Serializable {
 
     private Long createTime;
 
+    private String descr;
+    private String extend;
+    private String productNo;
+
 /*
     public String getMsProjectId() {
         return msProjectId;

@@ -61,10 +61,8 @@ public class TestCaseScriptInformationWithEmailDto implements Serializable {
      * 渠道
      */
     private String channelId;
-    /**
-     * App信息
-     */
-    private String appinfo;
+
+    private String appName;
     /**
      * 脚本创建时间
      */

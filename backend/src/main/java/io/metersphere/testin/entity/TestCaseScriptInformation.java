@@ -1,13 +1,10 @@
 package io.metersphere.testin.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.Date;
 import java.io.Serializable;
 
 /**
@@ -58,10 +55,22 @@ public class TestCaseScriptInformation implements Serializable {
      * 渠道
      */
     private String channelId;
+
+    private String appName;
+
     /**
-     * App信息
+     * 脚本执行策略:覆盖安装 指脚本执行完是否 要保持App在前台,1：清除app数据、0：不清楚
      */
-    private String appinfo;
+    private Integer coverInstall;
+    /**
+     * 指脚本执行完是否要清除应用的数据1：清除app数据、0
+     */
+    private Integer cleanData;
+    /**
+     * 指脚本执行完是否 要保持App在前台1：要保持app活性  0：直接杀掉进程
+     */
+    private Integer keepApp;
+
     /**
      * 脚本创建时间
      */

@@ -8,6 +8,7 @@ import io.metersphere.commons.utils.Pager;
 import io.metersphere.testin.dto.faceMsFront.TestCaseScriptInformationWithEmailDto;
 import io.metersphere.testin.entity.TestCaseScriptInformation;
 import io.metersphere.testin.service.TestCaseScriptInformationService;
+import io.metersphere.testin.util.ResponseEntity;
 import io.metersphere.testin.vo.TestCaseScriptInformationCombinVo;
 import io.metersphere.track.dto.TestCaseDTO;
 import io.metersphere.track.request.testcase.QueryTestCaseRequest;
@@ -18,7 +19,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
@@ -78,14 +79,17 @@ public class TestCaseScriptInformationController {
     public ResponseEntity add(@RequestBody TestCaseScriptInformation testCaseScriptInformation) {
         if (StringUtils.isBlank(testCaseScriptInformation.getTestCaseId())
                 ||testCaseScriptInformation.getScriptNo()==null
-        ) MSException.throwException("testCaseId、scriptId不能为空");
+                ||testCaseScriptInformation.getCleanData()==null
+                ||testCaseScriptInformation.getKeepApp()==null
+                ||testCaseScriptInformation.getCoverInstall()==null
+        ) MSException.throwException("testCaseId、scriptNo、cleanData、keepApp、coverInstall不能为空");
         if (CollectionUtils.isNotEmpty(this.testCaseScriptInformationService.queryAll(testCaseScriptInformation))){
-            return ResponseEntity.ok("用例已关联过脚本,无需再次关联");
+            return ResponseEntity.success("用例已关联过脚本,无需再次关联",null);
         }
         if (this.testCaseScriptInformationService.insert(testCaseScriptInformation)){
-            return ResponseEntity.ok("用例关联脚本成功");
+            return ResponseEntity.success("用例关联脚本成功",true);
         }else {
-            return new ResponseEntity("用例已关联脚本", HttpStatus.BAD_REQUEST);
+            return ResponseEntity.error("用例已关联脚本");
         }
     }
 
@@ -96,14 +100,14 @@ public class TestCaseScriptInformationController {
      * @return 编辑结果
      */
     @PostMapping("/edit")
-    public ResponseEntity edit(TestCaseScriptInformation testCaseScriptInformation) {
+    public ResponseEntity edit(@RequestBody TestCaseScriptInformation testCaseScriptInformation) {
         if (StringUtils.isBlank(testCaseScriptInformation.getTestCaseId())
                 ||testCaseScriptInformation.getScriptNo()==null
-        ) MSException.throwException("testCaseId、scriptId不能为空");
+        ) MSException.throwException("testCaseId、scriptNo不能为空");
         if (this.testCaseScriptInformationService.update(testCaseScriptInformation)){
-            return ResponseEntity.ok("用例编辑脚本成功");
+            return ResponseEntity.success("用例编辑脚本成功",null);
         }else {
-            return new ResponseEntity("用例编辑脚本异常", HttpStatus.BAD_REQUEST);
+            return ResponseEntity.error("用例编辑脚本异常");
         }
     }
 
@@ -115,7 +119,7 @@ public class TestCaseScriptInformationController {
      */
     @PostMapping("/delete/{testCaseId}")
     public ResponseEntity<Boolean> deleteById(@PathVariable String testCaseId) {
-        return ResponseEntity.ok(this.testCaseScriptInformationService.deleteById(testCaseId));
+        return ResponseEntity.success("删除成功",this.testCaseScriptInformationService.deleteById(testCaseId));
     }
 
 }

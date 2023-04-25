@@ -2,6 +2,7 @@ package io.metersphere.testin.boost;
 
 import com.alibaba.fastjson.JSON;
 import io.metersphere.commons.exception.MSException;
+import io.metersphere.commons.utils.SessionUtils;
 import io.metersphere.dto.UserDTO;
 import io.metersphere.service.UserService;
 import io.metersphere.testin.bo.*;
@@ -153,21 +154,27 @@ public class TestInApiExecutor {
         return genResponse(result, classOfT);
     }
     public String getEmailFromMs(){
-        UserDTO admin = userService.getUserInfo("admin");
+        String userId = SessionUtils.getUserId();
+        UserDTO admin = userService.getUserInfo(userId);
         if (StringUtils.isBlank(admin.getEmail())) {
-            MSException.throwException("未配置邮箱，请配置邮箱");
-            return "";
+//            MSException.throwException("未配置邮箱，请配置邮箱");
+            return "hanlei32@faw.com.cn";
         }
         return admin.getEmail();
     }
-    public static final String requestUrl = "openapi.pro.testin.cn";
+    public static final String requestUrl = "xxx";
+    public static final String apikey = "xxx";
+//    public static final String apikey = "xxx";
+//    http://test.pro.testin.cn/autotest/suiteSelect.htm?requestId=调用初始化任务返回的reqid
+//    public static final Integer OnCallProjectId = xxx;
+    public static final Integer OnCallProjectId = 0;
     public List<MsProjectTestinProjectTeam> msProjectTestInProjectTeamsFromQueryTestIn(Integer goPage, Integer pageSize, MsProjectTestinProjectTeamWithEmailDto msProjectTestinProjectTeamWithEmailDto) {
 
         List<MsProjectTestinProjectTeam> result=new ArrayList<>();
         QueryTheListOfProjectGroupsUnderTheEnterpriseDto queryTheListOfProjectGroupsUnderTheEnterpriseDto=QueryTheListOfProjectGroupsUnderTheEnterpriseDto.
                 builder()
-                .apikey("cae1bfe07371a3da0bc09c3cd9c00b14")
-                .mkey("usermanager")
+                .apikey(apikey)
+                .mkey("Usermanager")
                 .op("Project.getProjectList")
                 .data(
                         QueryTheListOfProjectGroupsUnderTheEnterpriseDto.RequestTestInData
@@ -175,6 +182,7 @@ public class TestInApiExecutor {
                                 .onlineUserInfo(
                                         QueryTheListOfProjectGroupsUnderTheEnterpriseDto.OnlineUserInfo.builder()
                                         .email(StringUtils.isNotBlank(msProjectTestinProjectTeamWithEmailDto.getEmail()) ?msProjectTestinProjectTeamWithEmailDto.getEmail():getEmailFromMs())
+                                        .projectid(OnCallProjectId)
                                         .build()
                                 )
                                 .page(goPage)
@@ -193,7 +201,18 @@ public class TestInApiExecutor {
             if (CollectionUtils.isNotEmpty(list)) {
                 for (QueryTheListOfProjectGroupsUnderTheEnterpriseBo.TestInProjectGroup testInProjectGroup : list) {
                     //testInProjectGroup  反序列化将一个对象转化为另一个对象
-                    result.add(JackJsonUtils.obj2pojo(testInProjectGroup, MsProjectTestinProjectTeam.class));
+                    MsProjectTestinProjectTeam msProjectTestinProjectTeam =MsProjectTestinProjectTeam.builder()
+                            .eid(testInProjectGroup.getEid())
+                            .createTime(testInProjectGroup.getCreateTime())
+                            .name(testInProjectGroup.getName())
+                            .testInProjectId(testInProjectGroup.getProjectid())
+                            .status(testInProjectGroup.getStatus())
+                            .thirdPartyProjectid(testInProjectGroup.getThirdPartyProjectid())
+                            .extend(testInProjectGroup.getExtend())
+                            .productNo(testInProjectGroup.getProductNo())
+                            .descr(testInProjectGroup.getDescr())
+                            .build();
+                    result.add(msProjectTestinProjectTeam);
                 }
             }
         }
@@ -204,7 +223,7 @@ public class TestInApiExecutor {
 //        List<TestCaseScriptInformation> result=new ArrayList<>();
         QueryTheListOfTestingScriptsDto queryTheListOfTestingScriptsDto=QueryTheListOfTestingScriptsDto.
                 builder()
-                .apikey("cae1bfe07371a3da0bc09c3cd9c00b14")
+                .apikey(apikey)
                 .mkey("script")
                 .op("Script.listScriptFile")
                 .data(
@@ -216,12 +235,15 @@ public class TestInApiExecutor {
                                     .build()
                                 )
                                 .scriptDesc(StringUtils.isNotEmpty(testCaseScriptInformation.getScriptCreateDesc())?testCaseScriptInformation.getScriptCreateDesc():null)
+                                .scriptType(1)
+                                .scriptNo(null!=testCaseScriptInformation.getScriptNo()?testCaseScriptInformation.getScriptNo():null)
                                 .projectId(testInProjectId)           //"用例关联的项目-项目关联的项目组"
                                 .startPageNo(goPage)
                                 .pageSize(pageSize)
                                 .build()
                 )
                 .action("script")
+                .timestamp(System.currentTimeMillis())
                 .build();
 //        String requestUrl = "openapi.pro.testin.cn";
         return GetQueryTestCaseScriptInformationFromQueryTestInUrl(requestUrl, queryTheListOfTestingScriptsDto, QueryTestInScriptListParameterDataBo.class);
@@ -277,9 +299,9 @@ public class TestInApiExecutor {
                                     .scriptUpdateUserid(scriptInformationResultFromRequest.getScriptUpdateUserid())
 
                                     .scriptUpdateDesc(scriptInformationResultFromRequest.getScriptUpdateDesc())
-
+                                    .appName(scriptInformationResultFromRequest.getAppinfo()!=null?scriptInformationResultFromRequest.getAppinfo().getAppName():null)
                                     .channelId(scriptInformationResultFromRequest.getChannelId())
-                                    .appinfo(scriptInformationResultFromRequest.getAppinfo())
+//                                    .appinfo(scriptInformationResultFromRequest.getAppinfo())
                                     .scriptCreateTime(scriptInformationResultFromRequest.getScriptCreateTime())
                                     .scriptUpdateTime(scriptInformationResultFromRequest.getScriptUpdateTime())
                                     .build()
@@ -310,7 +332,7 @@ public class TestInApiExecutor {
                                     .scriptUpdateDesc(scriptInformationResultFromRequest.getScriptUpdateDesc())
 
                                     .channelId(scriptInformationResultFromRequest.getChannelId())
-                                    .appinfo(scriptInformationResultFromRequest.getAppinfo())
+//                                    .appinfo(scriptInformationResultFromRequest.getAppinfo())
                                     .scriptCreateTime(scriptInformationResultFromRequest.getScriptCreateTime())
                                     .scriptUpdateTime(scriptInformationResultFromRequest.getScriptUpdateTime())
                                     .build()
@@ -322,8 +344,9 @@ public class TestInApiExecutor {
     }
 
     public String ObtainTheUserTokenForTheTestInSystem(Integer testInProjectId, String email) {
+        String token = null;
         QueryObtainUserTokenRequestTestinDto queryObtainUserTokenRequestTestinDto = QueryObtainUserTokenRequestTestinDto.builder()
-                .apikey("cae1bfe07371a3da0bc09c3cd9c00b14")
+                .apikey(apikey)
                 .mkey("UserManager")
                 .op("User.getToken")
                 .data(
@@ -345,10 +368,12 @@ public class TestInApiExecutor {
         if (response.isSuccess()) {
             QueryObtainUserTokenRequestTestinResultBo.RequestTestInResultData requestTestInResultData = response.getData();
             if (requestTestInResultData != null) {
-               return requestTestInResultData.getResult();
+                token=requestTestInResultData.getResult();
             }
+        }else {
+            token=ObtainTheUserTokenForTheTestInSystem(testInProjectId,email);
         }
-        return null;
+        return token;
     }
 
     public String InitiateDataRequestForTestingTaskTestin(String testPlanId, String callbackUrl, List<TestPlanCaseDTO> testPlanCaseDTOList, EmailDto emailDto, String token, MsProjectTestinProjectTeam msProjectTestinProjectTeam) {
@@ -365,18 +390,18 @@ public class TestInApiExecutor {
                     .scriptNo(scriptNo)
                     .standard(
                             QueryTheInitializationDataRequestForTheTestingTaskTestinDto.Standard.builder()
-                                    .coverInstall(0)
-                                    .cleanData(0)
-                                    .keepApp(0)
+                                    .coverInstall(testCaseScriptInformation.getCoverInstall())
+                                    .cleanData(testCaseScriptInformation.getCleanData())
+                                    .keepApp(testCaseScriptInformation.getKeepApp())
                                     .build()
                     )
                     .build());
         }
 
         QueryTheInitializationDataRequestForTheTestingTaskTestinDto queryTheInitializationDataRequestForTheTestingTaskTestinDto=QueryTheInitializationDataRequestForTheTestingTaskTestinDto.builder()
-                .apikey("cae1bfe07371a3da0bc09c3cd9c00b14")
-                .mkey("UserManager")
-                .op("User.getToken")
+                .apikey(apikey)
+                .mkey("realtest")
+                .op("Task.initData")
                 .sid(token)
                 .data(
                         QueryTheInitializationDataRequestForTheTestingTaskTestinDto.QueryTheInitializationDataRequestForTheTestingTaskTestinRequestData
@@ -391,7 +416,7 @@ public class TestInApiExecutor {
                                         .build())
                                 .build()
                 )
-                .action("user")
+                .action("app")
                 .timestamp(System.currentTimeMillis())
                 .build();
 //        String requestUrl = "openapi.pro.testin.cn";
@@ -419,7 +444,7 @@ public class TestInApiExecutor {
         List<Integer> resultCategoryListCollect = categorySummary.parallelStream().map(CallBackSendNotificationAfterTaskCompletionDto.CategorySummary::getResultCategory).collect(Collectors.toList());
         QueryToObtainTheExecutionDetailsOfTheTestingReportDto queryToObtainTheExecutionDetailsOfTheExecutionDetail=QueryToObtainTheExecutionDetailsOfTheTestingReportDto
                 .builder()
-                .apikey("cae1bfe07371a3da0bc09c3cd9c00b14")
+                .apikey(apikey)
                 .mkey("realtest")
                 .op("Report.list")
                 .sid(token)

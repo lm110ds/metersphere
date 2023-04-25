@@ -14,11 +14,8 @@ public class CallBackTaskTestingOrCompletionMessageRequestDto extends BaseDto{
     // 2.6 2.7 复合体
     private String serviceType;
     private String action;
-    private String sig;
     private String taskid;
-    private Integer projectid;
     //提测时提供
-    private String additionalInfo;
     private Content content;
 
     @Data
