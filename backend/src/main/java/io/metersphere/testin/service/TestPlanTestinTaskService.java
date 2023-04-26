@@ -9,6 +9,7 @@ import io.metersphere.testin.vo.TestPlanTestInTaskTokenReqIdCallbackUrlVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 /**
@@ -60,9 +61,9 @@ public interface TestPlanTestinTaskService {
      *
      * @return 是否成功
      */
-    boolean deleteById();
+    boolean deleteById(String testPlanId);
 
-    TestPlanTestInTaskTokenReqIdCallbackUrlVo getTestPlanTestInTaskTokenReqIdCallbackUrlVo(String testPlanId, EmailDto emailDto);
+    TestPlanTestInTaskTokenReqIdCallbackUrlVo getTestPlanTestInTaskTokenReqIdCallbackUrlVo(String testPlanId, EmailDto emailDto) throws UnsupportedEncodingException;
 
     Object callback(CallBackTaskTestingOrCompletionMessageRequestDto callBackTaskTestingOrCompletionMessageRequestDto);
 

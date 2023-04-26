@@ -2,28 +2,23 @@ package io.metersphere.testin.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
-import io.metersphere.commons.utils.LogUtil;
 import io.metersphere.commons.utils.PageUtils;
 import io.metersphere.commons.utils.Pager;
 import io.metersphere.testin.bo.QueryToObtainTheExecutionDetailsOfTheTestingReportGenerateBo;
 import io.metersphere.testin.dto.faceMsFront.EmailDto;
-import io.metersphere.testin.dto.faceMsFront.MsProjectTestinProjectTeamWithEmailDto;
 import io.metersphere.testin.dto.faceMsFront.ToObtainTheExecutionDetailsOfTheTestingReportGenerateDto;
 import io.metersphere.testin.dto.faceTestInFront.CallBackTaskTestingOrCompletionMessageRequestDto;
-import io.metersphere.testin.entity.TestPlanTestinTask;
 import io.metersphere.testin.service.TestPlanTestinTaskService;
-import io.metersphere.testin.vo.MsProjectTestinProjectTeamCombinVo;
 import io.metersphere.testin.vo.TestPlanTestInTaskTokenReqIdCallbackUrlVo;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.http.ResponseEntity;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+//import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.validation.Valid;
-import java.util.HashMap;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
-import java.util.Map;
 
 /**
  * (TestPlanTestinTask)表控制层
@@ -39,6 +34,11 @@ public class TestPlanTestInTaskController {
      */
     @Resource
     private TestPlanTestinTaskService testPlanTestinTaskService;
+    private static final Logger logger = LoggerFactory.getLogger(TestPlanTestInTaskController.class);
+
+/*    public static void main(String[] args) {
+        logger.info("This is a log message.");
+        logger.error("This is an error message.", new Exception("Something wrong happened."));}*/
 
     /**
      * 分页查询
@@ -80,22 +80,23 @@ public class TestPlanTestInTaskController {
         return ResponseEntity.ok(this.testPlanTestinTaskService.insert(testPlanTestinTask));
     }*/
     @PostMapping("/startTheTestInTask/{testPlanId}")
-    public ResponseEntity StartTheTestInTask(@PathVariable String testPlanId, @RequestBody EmailDto emailDto) {
+    public TestPlanTestInTaskTokenReqIdCallbackUrlVo StartTheTestInTask(@PathVariable String testPlanId, @RequestBody EmailDto emailDto) throws UnsupportedEncodingException {
 //        return ResponseEntity.ok(this.testPlanTestinTaskService.insert(testPlanTestinTask));
-        TestPlanTestInTaskTokenReqIdCallbackUrlVo testPlanTestInTaskTokenReqIdCallbackUrlVo = this.testPlanTestinTaskService.getTestPlanTestInTaskTokenReqIdCallbackUrlVo(testPlanId,emailDto);
-        if (testPlanTestInTaskTokenReqIdCallbackUrlVo != null) {
-            Map<String, Object> parameters = new HashMap<>();
-            parameters.put("data", testPlanTestInTaskTokenReqIdCallbackUrlVo);
-            parameters.put("message", "启动成功");
-            return ResponseEntity.ok(parameters);
+        return this.testPlanTestinTaskService.getTestPlanTestInTaskTokenReqIdCallbackUrlVo(testPlanId,emailDto);
+//        TestPlanTestInTaskTokenReqIdCallbackUrlVo testPlanTestInTaskTokenReqIdCallbackUrlVo = this.testPlanTestinTaskService.getTestPlanTestInTaskTokenReqIdCallbackUrlVo(testPlanId,emailDto);
+        /*if (testPlanTestInTaskTokenReqIdCallbackUrlVo != null) {
+            return ApiResult.success(200,"启动成功",testPlanTestInTaskTokenReqIdCallbackUrlVo);
         }else {
-            return ResponseEntity.badRequest().body("该测试计划所属项目未关联TestIn项目组");
-        }
+            return ApiResult.error("该测试计划所属项目未关联TestIn项目组");
+//            return ResponseEntity.badRequest().body("该测试计划所属项目未关联TestIn项目组");
+        }*/
     }
     @PostMapping("/callback")
-    public ResponseEntity callback(@RequestBody CallBackTaskTestingOrCompletionMessageRequestDto callBackTaskTestingOrCompletionMessageRequestDto) {
-        LogUtil.info("来自testIn的回调："+JSON.toJSONString(callBackTaskTestingOrCompletionMessageRequestDto));
-        return ResponseEntity.ok(this.testPlanTestinTaskService.callback(callBackTaskTestingOrCompletionMessageRequestDto));
+    public Object callback(@RequestBody CallBackTaskTestingOrCompletionMessageRequestDto callBackTaskTestingOrCompletionMessageRequestDto) {
+        logger.info("来自testIn的回调: {}",JSON.toJSONString(callBackTaskTestingOrCompletionMessageRequestDto));
+        return this.testPlanTestinTaskService.callback(callBackTaskTestingOrCompletionMessageRequestDto);
+//        return ApiResult.success(this.testPlanTestinTaskService.callback(callBackTaskTestingOrCompletionMessageRequestDto));
+//        return ResponseEntity.ok(this.testPlanTestinTaskService.callback(callBackTaskTestingOrCompletionMessageRequestDto));
 //        return ResponseEntity.ok(this.testPlanTestinTaskService.update(callBackTaskTestingOrCompletionMessageRequestDto));
     }
 

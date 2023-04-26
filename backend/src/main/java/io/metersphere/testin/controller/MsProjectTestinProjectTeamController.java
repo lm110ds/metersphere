@@ -7,14 +7,10 @@ import io.metersphere.commons.utils.Pager;
 import io.metersphere.testin.dto.faceMsFront.MsProjectTestinProjectTeamWithEmailDto;
 import io.metersphere.testin.entity.MsProjectTestinProjectTeam;
 import io.metersphere.testin.service.MsProjectTestinProjectTeamService;
-import io.metersphere.testin.util.ResponseEntity;
 import io.metersphere.testin.vo.MsProjectTestinProjectTeamCombinVo;
 import io.metersphere.track.service.TestPlanService;
 import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -75,15 +71,15 @@ public class MsProjectTestinProjectTeamController {
 
     @ApiModelProperty("关联企业下的项目组")
     @PostMapping("/add")
-    public ResponseEntity add(@RequestBody MsProjectTestinProjectTeam msProjectTestinProjectTeam) {
+    public Boolean add(@RequestBody MsProjectTestinProjectTeam msProjectTestinProjectTeam) {
         if (StringUtils.isBlank(msProjectTestinProjectTeam.getMsProjectId())
                 ||msProjectTestinProjectTeam.getTestInProjectId()==null
                 ||StringUtils.isBlank(msProjectTestinProjectTeam.getName())
         )  MSException.throwException("msProjectId、testInProjectId、name不能为空");
         if (this.msProjectTestinProjectTeamService.queryIsHaveTestInProjectTeamByIdMsProject(msProjectTestinProjectTeam) != null) {
-            return ResponseEntity.error("该ms项目关联TestIn项目组，暂时无法关联");
+            return false;
         }
-        return ResponseEntity.success("关联成功",this.msProjectTestinProjectTeamService.insert(msProjectTestinProjectTeam));
+        return this.msProjectTestinProjectTeamService.insert(msProjectTestinProjectTeam);
     }
 
     /**

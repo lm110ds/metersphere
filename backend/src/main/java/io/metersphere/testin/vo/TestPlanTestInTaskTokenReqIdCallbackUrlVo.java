@@ -23,6 +23,7 @@ public class TestPlanTestInTaskTokenReqIdCallbackUrlVo implements Serializable {
 
 //    @NotBlank(message = "项目组名称不能为空")
     private String Token;
+    private String gotoUrl;
 
     private String reqId;
 

@@ -40,9 +40,9 @@ CREATE TABLE IF NOT EXISTS `test_case_script_information` (
 -- for_ms_testin.test_plan_testin_task definition
 
 CREATE TABLE IF NOT EXISTS `test_plan_testin_task` (
-         `test_plan_id` varchar(100) NOT NULL COMMENT 'Test Plan ID',
-         `taskid` varchar(100) NOT NULL COMMENT '任务ID ',
-         `test_in_projectid` int(11) DEFAULT NULL COMMENT '项目组ID',
-         `exec_standard` varchar(100) DEFAULT NULL COMMENT '执行的策略normal 普通执行',
-         `summaryInfo` longtext
+    `test_plan_id` varchar(100) NOT NULL COMMENT 'Test Plan ID',
+    `taskid` varchar(100) DEFAULT NULL COMMENT '任务ID ',
+    `test_in_projectid` int(11) DEFAULT NULL COMMENT '项目组ID',
+    `exec_standard` varchar(100) DEFAULT NULL COMMENT '执行的策略normal 普通执行',
+    `summaryInfo` longtext
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

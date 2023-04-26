@@ -76,7 +76,7 @@ public class TestCaseScriptInformationController {
      * @return 新增结果
      */
     @PostMapping("/add")
-    public ResponseEntity add(@RequestBody TestCaseScriptInformation testCaseScriptInformation) {
+    public Boolean add(@RequestBody TestCaseScriptInformation testCaseScriptInformation) {
         if (StringUtils.isBlank(testCaseScriptInformation.getTestCaseId())
                 ||testCaseScriptInformation.getScriptNo()==null
                 ||testCaseScriptInformation.getCleanData()==null
@@ -84,13 +84,14 @@ public class TestCaseScriptInformationController {
                 ||testCaseScriptInformation.getCoverInstall()==null
         ) MSException.throwException("testCaseId、scriptNo、cleanData、keepApp、coverInstall不能为空");
         if (CollectionUtils.isNotEmpty(this.testCaseScriptInformationService.queryAll(testCaseScriptInformation))){
-            return ResponseEntity.success("用例已关联过脚本,无需再次关联",null);
+            return false;
         }
-        if (this.testCaseScriptInformationService.insert(testCaseScriptInformation)){
+        return this.testCaseScriptInformationService.insert(testCaseScriptInformation);
+        /*){
             return ResponseEntity.success("用例关联脚本成功",true);
         }else {
             return ResponseEntity.error("用例已关联脚本");
-        }
+        }*/
     }
 
     /**
@@ -100,15 +101,11 @@ public class TestCaseScriptInformationController {
      * @return 编辑结果
      */
     @PostMapping("/edit")
-    public ResponseEntity edit(@RequestBody TestCaseScriptInformation testCaseScriptInformation) {
+    public Boolean edit(@RequestBody TestCaseScriptInformation testCaseScriptInformation) {
         if (StringUtils.isBlank(testCaseScriptInformation.getTestCaseId())
                 ||testCaseScriptInformation.getScriptNo()==null
         ) MSException.throwException("testCaseId、scriptNo不能为空");
-        if (this.testCaseScriptInformationService.update(testCaseScriptInformation)){
-            return ResponseEntity.success("用例编辑脚本成功",null);
-        }else {
-            return ResponseEntity.error("用例编辑脚本异常");
-        }
+        return this.testCaseScriptInformationService.update(testCaseScriptInformation);
     }
 
     /**
@@ -118,8 +115,8 @@ public class TestCaseScriptInformationController {
      * @return 删除是否成功
      */
     @PostMapping("/delete/{testCaseId}")
-    public ResponseEntity<Boolean> deleteById(@PathVariable String testCaseId) {
-        return ResponseEntity.success("删除成功",this.testCaseScriptInformationService.deleteById(testCaseId));
+    public Boolean deleteById(@PathVariable String testCaseId) {
+        return this.testCaseScriptInformationService.deleteById(testCaseId);
     }
 
 }

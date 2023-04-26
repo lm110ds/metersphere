@@ -93,7 +93,7 @@
     </select>
 
     <!--新增所有列-->
-    <insert id="insert" keyProperty="" useGeneratedKeys="true">
+    <insert id="insert" useGeneratedKeys="true">
         insert into test_plan_testin_task(test_plan_id, taskid, test_in_projectid, exec_standard, summaryInfo)
         values (#{testPlanId}, #{taskid}, #{testInProjectid}, #{execStandard}, #{summaryinfo})
     </insert>

@@ -5,11 +5,13 @@ import com.github.pagehelper.PageHelper;
 import io.metersphere.base.domain.TestPlanWithBLOBs;
 import io.metersphere.base.mapper.ext.ExtTestPlanTestCaseMapper;
 import io.metersphere.commons.exception.MSException;
+import io.metersphere.commons.utils.LogUtil;
 import io.metersphere.commons.utils.PageUtils;
 import io.metersphere.commons.utils.Pager;
 import io.metersphere.commons.utils.ServiceUtils;
 import io.metersphere.testin.bo.QueryToObtainTheExecutionDetailsOfTheTestingReportGenerateBo;
 import io.metersphere.testin.boost.TestInApiExecutor;
+import io.metersphere.testin.controller.TestPlanTestInTaskController;
 import io.metersphere.testin.dao.MsProjectTestinProjectTeamDao;
 import io.metersphere.testin.dao.TestCaseScriptInformationDao;
 import io.metersphere.testin.dto.faceMsFront.EmailDto;
@@ -26,8 +28,11 @@ import io.metersphere.track.dto.TestPlanCaseDTO;
 import io.metersphere.track.request.testplancase.QueryTestPlanCaseRequest;
 import io.metersphere.track.service.TestPlanService;
 import io.metersphere.track.service.TestPlanTestCaseService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -36,6 +41,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,6 +68,8 @@ public class TestPlanTestinTaskServiceImpl implements TestPlanTestinTaskService 
     TestPlanTestCaseService testPlanTestCaseService;
     @Resource
     private TestInApiExecutor testInApiExecutor;
+
+    private static final Logger logger = LoggerFactory.getLogger(TestPlanTestinTaskServiceImpl.class);
 
     /**
      * 通过ID查询单条数据
@@ -119,12 +128,19 @@ public class TestPlanTestinTaskServiceImpl implements TestPlanTestinTaskService 
      * @return 是否成功
      */
     @Override
-    public boolean deleteById() {
-        return this.testPlanTestinTaskDao.deleteById() > 0;
+    public boolean deleteById(String testPlanId) {
+        return this.testPlanTestinTaskDao.deleteById(testPlanId) > 0;
     }
 
+    public static final String refUrl = "xxxx";
+    public static final String apikey = "xxx";
+    public static final String domain = "xxx";
+//    public static final String domain = "xx";
+    //    public static final String apikey = "xx";
+//    public static final Integer OnCallProjectId = 0;
+
     @Override
-    public TestPlanTestInTaskTokenReqIdCallbackUrlVo getTestPlanTestInTaskTokenReqIdCallbackUrlVo(String testPlanId, EmailDto emailDto) {
+    public TestPlanTestInTaskTokenReqIdCallbackUrlVo getTestPlanTestInTaskTokenReqIdCallbackUrlVo(String testPlanId, EmailDto emailDto) throws UnsupportedEncodingException {
         TestPlanTestInTaskTokenReqIdCallbackUrlVo testPlanTestInTaskTokenReqIdCallbackUrlVo = new TestPlanTestInTaskTokenReqIdCallbackUrlVo();
         //测试计划所属项目关联TestIn项目组
         MsProjectTestinProjectTeam msProjectTestinProjectTeam=HasTheProjectToWhichTheTestPlanBelongsAlreadyBeenAssociatedWithTheTestinProjectGroup(testPlanId);
@@ -132,31 +148,70 @@ public class TestPlanTestinTaskServiceImpl implements TestPlanTestinTaskService 
             //MSException.throwException("该测试计划所属项目未关联TestIn项目组");
             return testPlanTestInTaskTokenReqIdCallbackUrlVo;
         }
+        logger.info("msProjectTestinProjectTeam: {}", JSON.toJSONString(msProjectTestinProjectTeam));
+
+
         //找计划下的脚本
         List<TestPlanCaseDTO> testPlanCaseDTOList = getTestPlanCases(testPlanId,msProjectTestinProjectTeam.getMsProjectId());
         if (CollectionUtils.isEmpty(testPlanCaseDTOList)) {
             MSException.throwException("该测试计划未关联测试用例");
             return testPlanTestInTaskTokenReqIdCallbackUrlVo;
         }
+        logger.info("testPlanCaseDTOList: {}", JSON.toJSONString(testPlanCaseDTOList));
+
         //找token
         String token=testInApiExecutor.ObtainTheUserTokenForTheTestInSystem(msProjectTestinProjectTeam.getTestInProjectId(),emailDto.getEmail());
         if (StringUtils.isEmpty(token)){
             MSException.throwException("获取token异常,请稍后重试");
             return testPlanTestInTaskTokenReqIdCallbackUrlVo;
         }
+
+        logger.info("token: {}", JSON.toJSONString(token));
+
         //生成任务
-        String callbackUrl="https://10.245.9.13:8443/testPlanTestInTask/callback";
+        String callbackUrl="https://10.8.2.11:8443/testPlanTestInTask/callback";
         String reqId=testInApiExecutor.InitiateDataRequestForTestingTaskTestin(testPlanId,callbackUrl,testPlanCaseDTOList,emailDto,token,msProjectTestinProjectTeam);
         TestPlanTestinTask testPlanTestinTask =new TestPlanTestinTask();
         if (StringUtils.isNotBlank(reqId)) {
             testPlanTestinTask.setTestPlanId(testPlanId);
-            testPlanTestinTask.setTaskid(reqId);
-            //先查询，如果有则更新，否则 insert
+//            testPlanTestinTask.setTaskid(reqId);
+            //先查询，如果有则删除，然后返回    否则 返回
+            // 否则 insert
             List<TestPlanTestinTask> testPlanTestinTasks = this.testPlanTestinTaskDao.queryAll(testPlanTestinTask);
-            if (CollectionUtils.isNotEmpty(testPlanTestinTasks)){   //如果更新成功 return
+            if (CollectionUtils.isNotEmpty(testPlanTestinTasks)){
+                logger.info("testPlanTestinTasks: {}", JSON.toJSONString(testPlanTestinTasks));
+                for (TestPlanTestinTask planTestinTask : testPlanTestinTasks) {
+                    this.testPlanTestinTaskDao.deleteById(testPlanId);
+                }
+                this.testPlanTestinTaskDao.insert(testPlanTestinTask);
+                /*如果更新成功 return
                 if(this.testPlanTestinTaskDao.update(testPlanTestinTask)>0){
                     testPlanTestInTaskTokenReqIdCallbackUrlVo.setReqId(reqId);
                     testPlanTestInTaskTokenReqIdCallbackUrlVo.setToken(token);
+
+                    String encodeUrl = URLEncoder.encode(refUrl +reqId,"utf-8");
+                    String gotoUrl = domain+"/sso/callback.htm?appId=testinpro&token="+token+"&refUrl="+encodeUrl;
+                    testPlanTestInTaskTokenReqIdCallbackUrlVo.setGotoUrl(gotoUrl);
+                    return testPlanTestInTaskTokenReqIdCallbackUrlVo;
+                }*/
+            }else {
+                this.testPlanTestinTaskDao.insert(testPlanTestinTask);
+            }
+            testPlanTestInTaskTokenReqIdCallbackUrlVo.setReqId(reqId);
+            testPlanTestInTaskTokenReqIdCallbackUrlVo.setToken(token);
+
+            String encodeUrl = URLEncoder.encode(refUrl +reqId,"utf-8");
+            String gotoUrl = domain+"/sso/callback.htm?appId=testinpro&token="+token+"&refUrl="+encodeUrl;
+            testPlanTestInTaskTokenReqIdCallbackUrlVo.setGotoUrl(gotoUrl);
+            return testPlanTestInTaskTokenReqIdCallbackUrlVo;
+            /*if (CollectionUtils.isNotEmpty(testPlanTestinTasks)){   //如果更新成功 return
+                if(this.testPlanTestinTaskDao.update(testPlanTestinTask)>0){
+                    testPlanTestInTaskTokenReqIdCallbackUrlVo.setReqId(reqId);
+                    testPlanTestInTaskTokenReqIdCallbackUrlVo.setToken(token);
+
+                    String encodeUrl = URLEncoder.encode(refUrl +reqId,"utf-8");
+                    String gotoUrl = domain+"/sso/callback.htm?appId=testinpro&token="+token+"&refUrl="+encodeUrl;
+                    testPlanTestInTaskTokenReqIdCallbackUrlVo.setGotoUrl(gotoUrl);
                     return testPlanTestInTaskTokenReqIdCallbackUrlVo;
                 }
             }
@@ -164,8 +219,12 @@ public class TestPlanTestinTaskServiceImpl implements TestPlanTestinTaskService 
             if(this.testPlanTestinTaskDao.insert(testPlanTestinTask)>0){
                 testPlanTestInTaskTokenReqIdCallbackUrlVo.setReqId(reqId);
                 testPlanTestInTaskTokenReqIdCallbackUrlVo.setToken(token);
+
+                String encodeUrl = URLEncoder.encode(refUrl +reqId,"utf-8");
+                String gotoUrl = domain+"/sso/callback.htm?appId=testinpro&token="+token+"&refUrl="+encodeUrl;
+                testPlanTestInTaskTokenReqIdCallbackUrlVo.setGotoUrl(gotoUrl);
                 return testPlanTestInTaskTokenReqIdCallbackUrlVo;
-            }
+            }*/
         }
         // 成功 保存任务_计划 return token reqId
         return testPlanTestInTaskTokenReqIdCallbackUrlVo;
@@ -182,8 +241,7 @@ public class TestPlanTestinTaskServiceImpl implements TestPlanTestinTaskService 
         if (StringUtils.isNotBlank(planId)){
             testPlanTestinTask.setTestPlanId(planId);
         }
-        testPlanTestinTask.setTaskid(taskid);
-
+        // 如果有则删除，开始
         if (callBackTaskTestingOrCompletionMessageRequestDto.getAction().equals("createTask")) {
             String execStandard = content.getExecStandard();
             // 查询是否存在，如果存在则更新
@@ -193,9 +251,12 @@ public class TestPlanTestinTaskServiceImpl implements TestPlanTestinTaskService 
                 TestPlanTestinTask testPlanTestInTaskFromDb = testPlanTestinTasks.get(0);
                 testPlanTestInTaskFromDb.setTestInProjectid(projectid);
                 testPlanTestInTaskFromDb.setExecStandard(execStandard);
-                if (StringUtils.isNotBlank(planId)){
+
+                testPlanTestInTaskFromDb.setTaskid(taskid);
+
+                /*if (StringUtils.isNotBlank(planId)){
                     testPlanTestinTask.setTestPlanId(planId);
-                }
+                }*/
                 if(this.testPlanTestinTaskDao.update(testPlanTestInTaskFromDb)>0){
                     // 是否是执行获取报告存一份 获取报告执行明细 是分页的
                     return true;
@@ -211,15 +272,18 @@ public class TestPlanTestinTaskServiceImpl implements TestPlanTestinTaskService 
                 TestPlanTestinTask testPlanTestInTaskFromDb = testPlanTestinTasks.get(0);
                 testPlanTestInTaskFromDb.setTestInProjectid(projectid);
                 testPlanTestInTaskFromDb.setSummaryinfo(JSON.toJSONString(categorySummary));
-                if (StringUtils.isNotBlank(planId)){
+
+                testPlanTestInTaskFromDb.setTaskid(taskid);
+
+                /*if (StringUtils.isNotBlank(planId)){
                     testPlanTestinTask.setTestPlanId(planId);
-                }
+                }*/
                 if(this.testPlanTestinTaskDao.update(testPlanTestInTaskFromDb)>0){
                     ToObtainTheExecutionDetailsOfTheTestingReportGenerateDto toObtainTheExecutionDetailsOfTheTestingReportGenerateDto=new ToObtainTheExecutionDetailsOfTheTestingReportGenerateDto();
                     toObtainTheExecutionDetailsOfTheTestingReportGenerateDto.setProjectid(projectid);
                     toObtainTheExecutionDetailsOfTheTestingReportGenerateDto.setTestPlanId(planId);
                     toObtainTheExecutionDetailsOfTheTestingReportGenerateDto.setTaskid(taskid);
-                    List<QueryToObtainTheExecutionDetailsOfTheTestingReportGenerateBo.TestInProjectGroupTask> testInProjectGroupTasks = testInApiExecutor.queryToObtainTheExecutionDetailsOfTheTestingReport(1, Integer.MAX_VALUE - 1, toObtainTheExecutionDetailsOfTheTestingReportGenerateDto);
+                    List<QueryToObtainTheExecutionDetailsOfTheTestingReportGenerateBo.TestInProjectGroupTask> testInProjectGroupTasks = testInApiExecutor.queryToObtainTheExecutionDetailsOfTheTestingReport(1, 999, toObtainTheExecutionDetailsOfTheTestingReportGenerateDto);
                     if (CollectionUtils.isNotEmpty(testInProjectGroupTasks)) {
                         List<TestCaseScriptInformation> list=new ArrayList<>();
                         for (QueryToObtainTheExecutionDetailsOfTheTestingReportGenerateBo.TestInProjectGroupTask testInProjectGroupTask : testInProjectGroupTasks) {
