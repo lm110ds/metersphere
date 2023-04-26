@@ -351,12 +351,14 @@
     <update id="updateBatchSelective" parameterType="java.util.List">
         update test_case_script_information
         <trim prefix="set" suffixOverrides=",">
-        <trim prefix="result_category= case" suffix="end,">
-            <foreach collection="list" index="index" item="item">
-                <if test="item.resultCategory!= null">
-                    when script_no= #{item.scriptNo,jdbcType=INTEGER} then #{item.resultCategory,jdbcType=INTEGER}
-                </if>
-            </foreach>
+            <trim prefix="result_category= case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.resultCategory!= null">
+                        when script_no= #{item.scriptNo,jdbcType=INTEGER} then #{item.resultCategory,jdbcType=INTEGER}
+                    </if>
+                </foreach>
+
+            </trim>
         </trim>
         where script_no in
         <foreach close=")" collection="list" item="item" open="(" separator=", ">
