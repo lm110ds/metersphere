@@ -9,6 +9,7 @@ import io.metersphere.testin.dto.faceMsFront.TestCaseScriptInformationWithEmailD
 import io.metersphere.testin.entity.MsProjectTestinProjectTeam;
 import io.metersphere.testin.entity.TestCaseScriptInformation;
 import io.metersphere.testin.dao.TestCaseScriptInformationDao;
+import io.metersphere.testin.entity.TestCaseScriptInformationScriptDesc;
 import io.metersphere.testin.service.TestCaseScriptInformationService;
 import io.metersphere.testin.util.JackJsonUtils;
 import io.metersphere.testin.vo.TestCaseScriptInformationCombinVo;
@@ -126,7 +127,7 @@ public class TestCaseScriptInformationServiceImpl implements TestCaseScriptInfor
         }else {
             MsProjectTestinProjectTeam msProjectTestinProjectTeam = msProjectTestinProjectTeamDao.queryIsHaveTestInProjectTeamByIdMsProject(msProjectId);
             if (msProjectTestinProjectTeam.getTestInProjectId() != null) {
-                TestCaseScriptInformation testCaseScriptInformation=TestCaseScriptInformation.builder()
+                /*TestCaseScriptInformation testCaseScriptInformation=TestCaseScriptInformation.builder()
                         .testCaseId(testCaseScriptInformationWithEmailDto.getTestCaseId())
                         .scriptNo(testCaseScriptInformationWithEmailDto.getScriptNo())
                         .scriptId(testCaseScriptInformationWithEmailDto.getScriptId())
@@ -139,8 +140,22 @@ public class TestCaseScriptInformationServiceImpl implements TestCaseScriptInfor
                         .scriptCreateTime(testCaseScriptInformationWithEmailDto.getScriptCreateTime())
                         .scriptUpdateTime(testCaseScriptInformationWithEmailDto.getScriptUpdateTime())
                         .appName(testCaseScriptInformationWithEmailDto.getAppName())
-                        .build();
-                List<TestCaseScriptInformation> msTestCaseScriptInformationFromDb = this.testCaseScriptInformationDao.queryAll(testCaseScriptInformation);
+                        .build();*/
+                TestCaseScriptInformationScriptDesc testCaseScriptInformationScriptDesc=new TestCaseScriptInformationScriptDesc();
+                testCaseScriptInformationScriptDesc.setScriptDesc(testCaseScriptInformationWithEmailDto.getScriptDesc());
+                testCaseScriptInformationScriptDesc.setTestCaseId(testCaseScriptInformationWithEmailDto.getTestCaseId());
+                testCaseScriptInformationScriptDesc.setScriptNo(testCaseScriptInformationWithEmailDto.getScriptNo());
+                testCaseScriptInformationScriptDesc.setScriptId(testCaseScriptInformationWithEmailDto.getScriptId());
+                testCaseScriptInformationScriptDesc.setScriptCreateUser(testCaseScriptInformationWithEmailDto.getScriptCreateUser());
+                testCaseScriptInformationScriptDesc.setTestInProjectId(testCaseScriptInformationWithEmailDto.getTestInProjectId());
+                testCaseScriptInformationScriptDesc.setScriptUpdateUserid(testCaseScriptInformationWithEmailDto.getScriptUpdateUserid());
+                testCaseScriptInformationScriptDesc.setChannelId(testCaseScriptInformationWithEmailDto.getChannelId());
+                testCaseScriptInformationScriptDesc.setScriptCreateTime(testCaseScriptInformationWithEmailDto.getScriptCreateTime());
+                testCaseScriptInformationScriptDesc.setScriptUpdateTime(testCaseScriptInformationWithEmailDto.getScriptUpdateTime());
+                testCaseScriptInformationScriptDesc.setAppName(testCaseScriptInformationWithEmailDto.getAppName());
+
+//                List<TestCaseScriptInformation> msTestCaseScriptInformationFromDb = this.testCaseScriptInformationDao.queryAll(testCaseScriptInformation);
+                List<TestCaseScriptInformation> msTestCaseScriptInformationFromDb = this.testCaseScriptInformationDao.queryScriptDesc(testCaseScriptInformationScriptDesc);
 
                 List<TestCaseScriptInformation> msTestCaseScriptInformationFromQueryTestIn = testInApiExecutor.queryTestCaseScriptInformationFromQueryTestIn(goPage, pageSize, msProjectTestinProjectTeam.getTestInProjectId(),testCaseScriptInformationWithEmailDto);
 

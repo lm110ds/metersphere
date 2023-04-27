@@ -44,7 +44,8 @@ public class TestCaseScriptInformationWithEmailDto implements Serializable {
     /**
      * 描述
      */
-    private String scriptCreateDesc;
+//    private String scriptCreateDesc;
+    private String scriptDesc;
     /**
      * testin项目组ID
      */
@@ -56,7 +57,7 @@ public class TestCaseScriptInformationWithEmailDto implements Serializable {
     /**
      * 脚本更新描述
      */
-    private String scriptUpdateDesc;
+//    private String scriptUpdateDesc;
     /**
      * 渠道
      */

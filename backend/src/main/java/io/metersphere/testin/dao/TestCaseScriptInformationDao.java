@@ -1,6 +1,8 @@
 package io.metersphere.testin.dao;
 
+import io.metersphere.testin.entity.MsProjectTestinProjectTeam;
 import io.metersphere.testin.entity.TestCaseScriptInformation;
+import io.metersphere.testin.entity.TestCaseScriptInformationScriptDesc;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.data.domain.Pageable;
@@ -36,6 +38,7 @@ public interface TestCaseScriptInformationDao {
     List<TestCaseScriptInformation> queryAllByLimit(TestCaseScriptInformation testCaseScriptInformation, @Param("pageable") Pageable pageable);
 
     List<TestCaseScriptInformation> queryAll(TestCaseScriptInformation testCaseScriptInformation);
+    List<TestCaseScriptInformation> queryScriptDesc(TestCaseScriptInformationScriptDesc testCaseScriptInformation);
 
     /**
      * 统计总行数

@@ -181,6 +181,77 @@
         </where>
         limit #{pageable.offset}, #{pageable.pageSize}
     </select>
+    <select id="queryScriptDesc" resultMap="TestCaseScriptInformationMap">
+        select
+        test_case_id, script_id, script_no, script_create_user, script_create_desc, test_in_project_id,
+        script_update_userid, script_update_desc, channel_id, app_name, cover_install, clean_data, keep_app,
+        result_category, script_create_time, script_update_time
+        from test_case_script_information
+        <where>
+            <if test="testCaseId != null and testCaseId != ''">
+                and test_case_id = #{testCaseId}
+            </if>
+            <if test="scriptId != null">
+                and script_id = #{scriptId}
+            </if>
+            <if test="scriptNo != null">
+                and script_no = #{scriptNo}
+            </if>
+            <if test="scriptCreateUser != null">
+                and script_create_user = #{scriptCreateUser}
+            </if>
+<!--            <if test="scriptCreateDesc != null and scriptCreateDesc != ''">-->
+<!--                and script_create_desc = #{scriptCreateDesc}-->
+<!--            </if>-->
+            <if test="testInProjectId != null and testInProjectId != ''">
+                and test_in_project_id = #{testInProjectId}
+            </if>
+            <if test="scriptUpdateUserid != null">
+                and script_update_userid = #{scriptUpdateUserid}
+            </if>
+<!--            <if test="scriptUpdateDesc != null and scriptUpdateDesc != ''">-->
+<!--                and script_update_desc = #{scriptUpdateDesc}-->
+<!--            </if>-->
+            <if test="channelId != null and channelId != ''">
+                and channel_id = #{channelId}
+            </if>
+            <if test="appName != null and appName != ''">
+                and app_name = #{appName}
+            </if>
+            <if test="coverInstall != null">
+                and cover_install = #{coverInstall}
+            </if>
+            <if test="cleanData != null">
+                and clean_data = #{cleanData}
+            </if>
+            <if test="keepApp != null">
+                and keep_app = #{keepApp}
+            </if>
+            <if test="resultCategory != null">
+                and result_category = #{resultCategory}
+            </if>
+            <if test="scriptCreateTime != null">
+                and script_create_time = #{scriptCreateTime}
+            </if>
+            <if test="scriptUpdateTime != null">
+                and script_update_time = #{scriptUpdateTime}
+            </if>
+
+            <if test="scriptDesc != null ">
+                AND
+                <trim prefixOverrides="OR" prefix = "(" suffix=")">
+                    <if test="scriptDesc != null and scriptDesc != ''" >
+                        OR script_create_desc = #{scriptDesc}
+                    </if>
+                    <if test="scriptDesc != null and scriptDesc != ''">
+                        OR script_update_desc = #{scriptDesc}
+                    </if>
+                </trim>
+            </if>
+
+        </where>
+
+    </select>
     <!--统计总行数-->
     <select id="count" resultType="java.lang.Long">
         select count(1)
