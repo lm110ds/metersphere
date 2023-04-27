@@ -135,6 +135,7 @@ public class TestPlanTestinTaskServiceImpl implements TestPlanTestinTaskService 
     public static final String refUrl = "xxxx";
     public static final String apikey = "xxx";
     public static final String domain = "xxx";
+    public static final String callbackIpPort = "xxx";
 //    public static final String domain = "xx";
     //    public static final String apikey = "xx";
 //    public static final Integer OnCallProjectId = 0;
@@ -169,7 +170,7 @@ public class TestPlanTestinTaskServiceImpl implements TestPlanTestinTaskService 
         logger.info("token: {}", JSON.toJSONString(token));
 
         //生成任务
-        String callbackUrl="https://10.8.2.11:8443/testPlanTestInTask/callback";
+        String callbackUrl=callbackIpPort+"/testPlanTestInTask/callback";
         String reqId=testInApiExecutor.InitiateDataRequestForTestingTaskTestin(testPlanId,callbackUrl,testPlanCaseDTOList,emailDto,token,msProjectTestinProjectTeam);
         TestPlanTestinTask testPlanTestinTask =new TestPlanTestinTask();
         if (StringUtils.isNotBlank(reqId)) {
@@ -264,14 +265,15 @@ public class TestPlanTestinTaskServiceImpl implements TestPlanTestinTaskService 
             }
         }
         if (callBackTaskTestingOrCompletionMessageRequestDto.getAction().equals("complete")) {
-            List<CallBackTaskTestingOrCompletionMessageRequestDto.CategorySummary> categorySummary = content.getSummaryInfo().getCategorySummary();
+//            List<CallBackTaskTestingOrCompletionMessageRequestDto.CategorySummary> categorySummary = content.getSummaryInfo();
+            List<CallBackTaskTestingOrCompletionMessageRequestDto.SummaryInfo> summaryInfo = content.getSummaryInfo();
             // 查询是否存在，如果存在则更新
             //如果完成，更新报告->最后一个接口请求报告明细，可以放单独某个字段下或者其他分表细表里面
             List<TestPlanTestinTask> testPlanTestinTasks = this.testPlanTestinTaskDao.queryAll(testPlanTestinTask);
             if (CollectionUtils.isNotEmpty(testPlanTestinTasks)){   //如果更新成功 return
                 TestPlanTestinTask testPlanTestInTaskFromDb = testPlanTestinTasks.get(0);
                 testPlanTestInTaskFromDb.setTestInProjectid(projectid);
-                testPlanTestInTaskFromDb.setSummaryinfo(JSON.toJSONString(categorySummary));
+                testPlanTestInTaskFromDb.setSummaryinfo(JSON.toJSONString(summaryInfo));
 
                 testPlanTestInTaskFromDb.setTaskid(taskid);
 

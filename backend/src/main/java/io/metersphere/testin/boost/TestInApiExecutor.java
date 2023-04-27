@@ -1,7 +1,9 @@
 package io.metersphere.testin.boost;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import io.metersphere.commons.exception.MSException;
+import io.metersphere.commons.utils.LogUtil;
 import io.metersphere.commons.utils.SessionUtils;
 import io.metersphere.dto.UserDTO;
 import io.metersphere.service.UserService;
@@ -156,7 +158,7 @@ public class TestInApiExecutor {
     public String getEmailFromMs(){
         String userId = SessionUtils.getUserId();
         UserDTO admin = userService.getUserInfo(userId);
-        if (StringUtils.isBlank(admin.getEmail())) {
+        if (admin==null||StringUtils.isBlank(admin.getEmail())) {
 //            MSException.throwException("未配置邮箱，请配置邮箱");
             return "hanlei32@faw.com.cn";
         }
@@ -185,9 +187,9 @@ public class TestInApiExecutor {
                                         .projectid(OnCallProjectId)
                                         .build()
                                 )
-                                .page(goPage)
+                                .page(1)       //goPage
                                 .status(1)
-                                .pageSize(pageSize)
+                                .pageSize(999)     //pageSize
                         .build()
                 )
                 .action("user")
@@ -197,7 +199,9 @@ public class TestInApiExecutor {
         QueryTheListOfProjectGroupsUnderTheEnterpriseBo response = doPostResponse(requestUrl, queryTheListOfProjectGroupsUnderTheEnterpriseDto, QueryTheListOfProjectGroupsUnderTheEnterpriseBo.class);
         if (response.isSuccess()) {
             QueryTheListOfProjectGroupsUnderTheEnterpriseBo.RequestTestInResultData requestTestInResultData = response.getData();
+            Integer totalPage =requestTestInResultData.getTotalPage();
             List<QueryTheListOfProjectGroupsUnderTheEnterpriseBo.TestInProjectGroup> list = requestTestInResultData.getList();
+
             if (CollectionUtils.isNotEmpty(list)) {
                 for (QueryTheListOfProjectGroupsUnderTheEnterpriseBo.TestInProjectGroup testInProjectGroup : list) {
                     //testInProjectGroup  反序列化将一个对象转化为另一个对象
@@ -213,6 +217,54 @@ public class TestInApiExecutor {
                             .descr(testInProjectGroup.getDescr())
                             .build();
                     result.add(msProjectTestinProjectTeam);
+                }
+            }
+            for (int i = requestTestInResultData.getPage()+1; i <= totalPage; i++) {
+                QueryTheListOfProjectGroupsUnderTheEnterpriseDto queryTheListOfProjectGroupsUnderTheEnterpriseDtoLoopI=QueryTheListOfProjectGroupsUnderTheEnterpriseDto.
+                        builder()
+                        .apikey(apikey)
+                        .mkey("Usermanager")
+                        .op("Project.getProjectList")
+                        .data(
+                                QueryTheListOfProjectGroupsUnderTheEnterpriseDto.RequestTestInData
+                                        .builder()
+                                        .onlineUserInfo(
+                                                QueryTheListOfProjectGroupsUnderTheEnterpriseDto.OnlineUserInfo.builder()
+                                                        .email(StringUtils.isNotBlank(msProjectTestinProjectTeamWithEmailDto.getEmail()) ?msProjectTestinProjectTeamWithEmailDto.getEmail():getEmailFromMs())
+                                                        .projectid(OnCallProjectId)
+                                                        .build()
+                                        )
+                                        .page(i)       //goPage
+                                        .status(1)
+                                        .pageSize(999)     //pageSize
+                                        .build()
+                        )
+                        .action("user")
+                        .timestamp(System.currentTimeMillis())
+                        .build();
+                QueryTheListOfProjectGroupsUnderTheEnterpriseBo responseLoopI = doPostResponse(requestUrl, queryTheListOfProjectGroupsUnderTheEnterpriseDtoLoopI, QueryTheListOfProjectGroupsUnderTheEnterpriseBo.class);
+                if (response.isSuccess()) {
+                    QueryTheListOfProjectGroupsUnderTheEnterpriseBo.RequestTestInResultData requestTestInResultDataLoopI = responseLoopI.getData();
+//                    Integer totalPage =requestTestInResultData.getTotalPage();
+                    List<QueryTheListOfProjectGroupsUnderTheEnterpriseBo.TestInProjectGroup> listLoopI = requestTestInResultDataLoopI.getList();
+
+                    if (CollectionUtils.isNotEmpty(listLoopI)) {
+                        for (QueryTheListOfProjectGroupsUnderTheEnterpriseBo.TestInProjectGroup testInProjectGroup : listLoopI) {
+                            //testInProjectGroup  反序列化将一个对象转化为另一个对象
+                            MsProjectTestinProjectTeam msProjectTestinProjectTeam =MsProjectTestinProjectTeam.builder()
+                                    .eid(testInProjectGroup.getEid())
+                                    .createTime(testInProjectGroup.getCreateTime())
+                                    .name(testInProjectGroup.getName())
+                                    .testInProjectId(testInProjectGroup.getProjectid())
+                                    .status(testInProjectGroup.getStatus())
+                                    .thirdPartyProjectid(testInProjectGroup.getThirdPartyProjectid())
+                                    .extend(testInProjectGroup.getExtend())
+                                    .productNo(testInProjectGroup.getProductNo())
+                                    .descr(testInProjectGroup.getDescr())
+                                    .build();
+                            result.add(msProjectTestinProjectTeam);
+                        }
+                    }
                 }
             }
         }
@@ -234,7 +286,7 @@ public class TestInApiExecutor {
                                             .email(StringUtils.isNotBlank(testCaseScriptInformation.getEmail()) ?testCaseScriptInformation.getEmail():getEmailFromMs())
                                     .build()
                                 )
-                                .scriptDesc(StringUtils.isNotEmpty(testCaseScriptInformation.getScriptCreateDesc())?testCaseScriptInformation.getScriptCreateDesc():null)
+                                .scriptDesc(StringUtils.isNotEmpty(testCaseScriptInformation.getScriptDesc())?testCaseScriptInformation.getScriptDesc():null)
                                 .scriptType(1)
                                 .scriptNo(null!=testCaseScriptInformation.getScriptNo()?testCaseScriptInformation.getScriptNo():null)
                                 .projectId(testInProjectId)           //"用例关联的项目-项目关联的项目组"
@@ -437,11 +489,18 @@ public class TestInApiExecutor {
             return null;
         }
         TestPlanTestinTask testPlanTestinTask = this.testPlanTestinTaskService.queryById(toObtainTheExecutionDetailsOfTheTestingReportGenerateDto.getTestPlanId());
+        if (Objects.isNull(testPlanTestinTask)){
+            MSException.throwException("提测任务为空,请先去启动testin任务提测");
+            return null;
+        }
         String summaryinfo = testPlanTestinTask.getSummaryinfo();
         //反序列化json
+//        List<CallBackTaskTestingOrCompletionMessageRequestDto.SummaryInfo> summaryInfoList = (List<CallBackTaskTestingOrCompletionMessageRequestDto.SummaryInfo>) JSON.parseObject(summaryinfo);
+        LogUtil.info(" summaryinfo : {}",JSON.toJSONString(summaryinfo));
+        JSONArray objects = JSONArray.parseArray(summaryinfo);
+        List<CallBackTaskTestingOrCompletionMessageRequestDto.SummaryInfo> summaryInfoList = objects.toJavaList(CallBackTaskTestingOrCompletionMessageRequestDto.SummaryInfo.class);
 
-        List<CallBackSendNotificationAfterTaskCompletionDto.CategorySummary> categorySummary = (List<CallBackSendNotificationAfterTaskCompletionDto.CategorySummary>) JSON.parseObject(summaryinfo);
-        List<Integer> resultCategoryListCollect = categorySummary.parallelStream().map(CallBackSendNotificationAfterTaskCompletionDto.CategorySummary::getResultCategory).collect(Collectors.toList());
+        List<Integer> resultCategoryListCollect = summaryInfoList.parallelStream().map(CallBackTaskTestingOrCompletionMessageRequestDto.SummaryInfo::getResultCategory).collect(Collectors.toList());
         QueryToObtainTheExecutionDetailsOfTheTestingReportDto queryToObtainTheExecutionDetailsOfTheExecutionDetail=QueryToObtainTheExecutionDetailsOfTheTestingReportDto
                 .builder()
                 .apikey(apikey)
@@ -466,6 +525,7 @@ public class TestInApiExecutor {
                 .build();
 //        String requestUrl = "openapi.pro.testin.cn";
         QueryToObtainTheExecutionDetailsOfTheTestingReportGenerateBo response = doPostResponse(requestUrl, queryToObtainTheExecutionDetailsOfTheExecutionDetail, QueryToObtainTheExecutionDetailsOfTheTestingReportGenerateBo.class);
+        LogUtil.info(" query Report.list response : {}",JSON.toJSONString(response));
         if (response.isSuccess()) {
             QueryToObtainTheExecutionDetailsOfTheTestingReportGenerateBo.RequestTestInResultData requestTestInResultData = response.getData();
             if (requestTestInResultData != null) {
