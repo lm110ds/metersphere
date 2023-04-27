@@ -4,6 +4,7 @@ import io.metersphere.testin.boost.TestInApiExecutor;
 import io.metersphere.testin.dto.faceMsFront.MsProjectTestinProjectTeamWithEmailDto;
 import io.metersphere.testin.entity.MsProjectTestinProjectTeam;
 import io.metersphere.testin.dao.MsProjectTestinProjectTeamDao;
+import io.metersphere.testin.entity.MsProjectTestinProjectTeamNameOrDescr;
 import io.metersphere.testin.service.MsProjectTestinProjectTeamService;
 import io.metersphere.testin.util.JackJsonUtils;
 import io.metersphere.testin.vo.MsProjectTestinProjectTeamCombinVo;
@@ -95,7 +96,7 @@ public class MsProjectTestinProjectTeamServiceImpl implements MsProjectTestinPro
     @Override
     public List<MsProjectTestinProjectTeamCombinVo> listMsProjectTestinProjectTeam(Integer goPage, Integer pageSize, MsProjectTestinProjectTeamWithEmailDto msProjectTestinProjectTeamWithEmailDto) {
         List<MsProjectTestinProjectTeamCombinVo> result=new ArrayList<>();
-        MsProjectTestinProjectTeam msProjectTestinProjectTeam =MsProjectTestinProjectTeam.builder()
+/*        MsProjectTestinProjectTeam msProjectTestinProjectTeam =MsProjectTestinProjectTeam.builder()
                 .msProjectId(msProjectTestinProjectTeamWithEmailDto.getMsProjectId())
                 .testInProjectId(msProjectTestinProjectTeamWithEmailDto.getTestInProjectId())
                 .eid(msProjectTestinProjectTeamWithEmailDto.getEid())
@@ -106,8 +107,20 @@ public class MsProjectTestinProjectTeamServiceImpl implements MsProjectTestinPro
                 .descr(msProjectTestinProjectTeamWithEmailDto.getDescr())
                 .extend(msProjectTestinProjectTeamWithEmailDto.getExtend())
                 .productNo(msProjectTestinProjectTeamWithEmailDto.getProductNo())
-                .build();
-        List<MsProjectTestinProjectTeam> msProjectTestInProjectTeams = this.msProjectTestinProjectTeamDao.queryAll(msProjectTestinProjectTeam);
+                .build();*/
+        MsProjectTestinProjectTeamNameOrDescr msProjectTestinProjectTeamNameOrDescr =new MsProjectTestinProjectTeamNameOrDescr();
+        msProjectTestinProjectTeamNameOrDescr.setMsProjectId(msProjectTestinProjectTeamWithEmailDto.getMsProjectId());
+        msProjectTestinProjectTeamNameOrDescr.setTestInProjectId(msProjectTestinProjectTeamWithEmailDto.getTestInProjectId());
+        msProjectTestinProjectTeamNameOrDescr.setEid(msProjectTestinProjectTeamWithEmailDto.getEid());
+        msProjectTestinProjectTeamNameOrDescr.setThirdPartyProjectid(msProjectTestinProjectTeamWithEmailDto.getThirdPartyProjectid());
+        msProjectTestinProjectTeamNameOrDescr.setStatus(msProjectTestinProjectTeamWithEmailDto.getStatus());
+        msProjectTestinProjectTeamNameOrDescr.setCreateTime(msProjectTestinProjectTeamWithEmailDto.getCreateTime());
+        msProjectTestinProjectTeamNameOrDescr.setExtend(msProjectTestinProjectTeamWithEmailDto.getExtend());
+        msProjectTestinProjectTeamNameOrDescr.setProductNo(msProjectTestinProjectTeamWithEmailDto.getProductNo());
+        msProjectTestinProjectTeamNameOrDescr.setNameOrDescr(msProjectTestinProjectTeamWithEmailDto.getNameOrDescr());
+
+//        List<MsProjectTestinProjectTeam> msProjectTestInProjectTeams = this.msProjectTestinProjectTeamDao.queryAll(msProjectTestinProjectTeam);
+        List<MsProjectTestinProjectTeam> msProjectTestInProjectTeams = this.msProjectTestinProjectTeamDao.queryNameOrDesc(msProjectTestinProjectTeamNameOrDescr);
         List<MsProjectTestinProjectTeam> msProjectTestInProjectTeamsFromQueryTestIn = testInApiExecutor.msProjectTestInProjectTeamsFromQueryTestIn(goPage, pageSize, msProjectTestinProjectTeamWithEmailDto);
         if (CollectionUtils.isNotEmpty(msProjectTestInProjectTeams)) {
             if (CollectionUtils.isNotEmpty(msProjectTestInProjectTeamsFromQueryTestIn)) {

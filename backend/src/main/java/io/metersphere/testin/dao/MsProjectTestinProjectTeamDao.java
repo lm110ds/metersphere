@@ -1,6 +1,7 @@
 package io.metersphere.testin.dao;
 
 import io.metersphere.testin.entity.MsProjectTestinProjectTeam;
+import io.metersphere.testin.entity.MsProjectTestinProjectTeamNameOrDescr;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.data.domain.Pageable;
@@ -37,6 +38,7 @@ public interface MsProjectTestinProjectTeamDao {
     List<MsProjectTestinProjectTeam> queryAllByLimit(MsProjectTestinProjectTeam msProjectTestinProjectTeam, @Param("pageable") Pageable pageable);
 
     List<MsProjectTestinProjectTeam> queryAll(MsProjectTestinProjectTeam msProjectTestinProjectTeam);
+    List<MsProjectTestinProjectTeam> queryNameOrDesc(MsProjectTestinProjectTeamNameOrDescr msProjectTestinProjectTeamNameOrDescr);
 
     /**
      * 统计总行数

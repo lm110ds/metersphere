@@ -123,6 +123,58 @@
             </if>
         </where>
     </select>
+    <select id="queryNameOrDesc" resultMap="MsProjectTestinProjectTeamMap">
+        select
+        ms_project_id, test_in_project_id, eid, name, third_party_projectid, status, create_time, descr, extend,
+        product_no
+        from ms_project_testin_project_team
+        <where>
+            <if test="msProjectId != null and msProjectId != ''">
+                and ms_project_id = #{msProjectId}
+            </if>
+            <if test="testInProjectId != null and testInProjectId != ''">
+                and test_in_project_id = #{testInProjectId}
+            </if>
+            <if test="eid != null">
+                and eid = #{eid}
+            </if>
+<!--            <if test="name != null and name != ''">-->
+<!--                and name = #{name}-->
+<!--            </if>-->
+            <if test="thirdPartyProjectid != null and thirdPartyProjectid != ''">
+                and third_party_projectid = #{thirdPartyProjectid}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+<!--            <if test="descr != null and descr != ''">-->
+<!--                and descr = #{descr}-->
+<!--            </if>-->
+            <if test="extend != null and extend != ''">
+                and extend = #{extend}
+            </if>
+            <if test="productNo != null and productNo != ''">
+                and product_no = #{productNo}
+            </if>
+
+            <if test="name != null or descr != null">
+                AND
+                <trim prefixOverrides="OR" prefix = "(" suffix=")">
+                    <if test="name != null and name != ''" >
+                        OR name = #{nameOrDescr}
+                    </if>
+                    <if test="descr != null and descr != ''">
+                        OR descr = #{nameOrDescr}
+                    </if>
+                </trim>
+            </if>
+
+
+        </where>
+    </select>
 
     <!--统计总行数-->
     <select id="count" resultType="java.lang.Long">

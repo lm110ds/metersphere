@@ -74,8 +74,10 @@ public class ShiroUtils {
         filterChainDefinitionMap.put("/mock/**", "anon");
         filterChainDefinitionMap.put("/ws/**", "anon");
 
-        filterChainDefinitionMap.put("/testPlanTestInTask/callback", "anon");
+//        filterChainDefinitionMap.put("/testPlanTestInTask/callback", "anon");
         filterChainDefinitionMap.put("/testPlanTestInTask/**", "anon");
+        filterChainDefinitionMap.put("/msProjectTestinProjectTeam/**", "anon");
+        filterChainDefinitionMap.put("/testCaseScriptInformation/**", "anon");
     }
 
     public static void ignoreCsrfFilter(Map<String, String> filterChainDefinitionMap) {
