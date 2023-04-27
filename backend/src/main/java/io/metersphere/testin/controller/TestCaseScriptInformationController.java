@@ -96,11 +96,29 @@ public class TestCaseScriptInformationController {
      * @param  主键
      * @return 单条数据
      */
-   /* @GetMapping("{id}")
-    public ResponseEntity<TestCaseScriptInformation> queryById() {
-        return ResponseEntity.ok(this.testCaseScriptInformationService.queryById());
-    }*/
-
+    @GetMapping("/GetTestCaseScriptInformation/{testCaseId}")
+    public TestCaseScriptInformation getTestCaseScriptInformation(@PathVariable String testCaseId) {
+//        TestCaseScriptInformation queryTestCaseScriptInformationByTestCaseId(String testCaseId)
+        return this.testCaseScriptInformationService.queryTestCaseScriptInformationByTestCaseId(testCaseId);
+    }
+    @PostMapping("/updateOrInsertTestCaseScriptInformation")
+    public Boolean updateOrInsertTestCaseScriptInformation(@RequestBody TestCaseScriptInformation testCaseScriptInformation) {
+        /*if (StringUtils.isBlank(testCaseScriptInformation.getTestCaseId())
+                ||testCaseScriptInformation.getScriptNo()==null
+                ||testCaseScriptInformation.getCleanData()==null
+                ||testCaseScriptInformation.getKeepApp()==null
+                ||testCaseScriptInformation.getCoverInstall()==null
+        ) MSException.throwException("testCaseId、scriptNo、cleanData、keepApp、coverInstall不能为空");*/
+        if (CollectionUtils.isNotEmpty(this.testCaseScriptInformationService.queryAll(testCaseScriptInformation))){
+            return this.testCaseScriptInformationService.update(testCaseScriptInformation);
+        }
+        return this.testCaseScriptInformationService.insert(testCaseScriptInformation);
+        /*){
+            return ResponseEntity.success("用例关联脚本成功",true);
+        }else {
+            return ResponseEntity.error("用例已关联脚本");
+        }*/
+    }
     /**
      * 新增数据
      *

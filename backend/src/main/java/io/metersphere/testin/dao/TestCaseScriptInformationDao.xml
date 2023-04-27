@@ -179,7 +179,6 @@
                 and script_update_time = #{scriptUpdateTime}
             </if>
         </where>
-        limit #{pageable.offset}, #{pageable.pageSize}
     </select>
     <select id="queryScriptDesc" resultMap="TestCaseScriptInformationMap">
         select

@@ -17,6 +17,7 @@ public class CallBackTaskTestingOrCompletionMessageRequestDto extends BaseDto{
     private String serviceType;
     private String action;
     private String taskid;
+    private String taskDescr;
     //提测时提供
     private Content content;
 
@@ -29,7 +30,7 @@ public class CallBackTaskTestingOrCompletionMessageRequestDto extends BaseDto{
         private List<PmRealAdaptDevice> devices;
         private List<PmRealAdaptScript> scripts;
         private Integer jobId;
-        private SummaryInfo summaryInfo;
+        private List<SummaryInfo> summaryInfo;
     }
 
     @Data
@@ -195,23 +196,41 @@ public class CallBackTaskTestingOrCompletionMessageRequestDto extends BaseDto{
 
     @Data
     public static class AppInfo {
-        private String packageName;
-        private String appName;
+        private String appVersion;
+        private Integer suiteId;
         private String startupPath;
-        private Long appSizde;
+        private String storePass;
+        private String appName;
+        private String certificateUrl;
+        private Long appSize;
+        private Integer syspfId;
+        private String keyPass;
+        private String build;
+        private String packageUrl;
+        private Integer appId;
+        private String alias;
         private String appMd5;
+        private String iconUrl;
+        private Integer pkgId;
+        private String packageName;
+
     }
 
-    @Data
+/*    @Data
     public static class CategorySummary {
         private Integer val;
         private Integer resultCategory;
         private String type;
-    }
+        private String keyName;
+    }*/
 
     @Data
     public static class SummaryInfo {
-        private List<CategorySummary> categorySummary;
+        private Integer val;
+        private Integer resultCategory;
+        private String type;
+        private String keyName;
+//        private List<CategorySummary> categorySummary;
     }
     /*public class Devices {
 

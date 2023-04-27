@@ -7,6 +7,7 @@ import io.metersphere.commons.utils.Pager;
 import io.metersphere.controller.handler.annotation.NoResultHolder;
 import io.metersphere.testin.dto.faceMsFront.MsProjectTestinProjectTeamWithEmailDto;
 import io.metersphere.testin.entity.MsProjectTestinProjectTeam;
+import io.metersphere.testin.entity.TestCaseScriptInformation;
 import io.metersphere.testin.service.MsProjectTestinProjectTeamService;
 import io.metersphere.testin.vo.MsProjectTestinProjectTeamCombinVo;
 import io.metersphere.track.service.TestPlanService;
@@ -99,6 +100,13 @@ public class MsProjectTestinProjectTeamController {
      * @param id 主键
      * @return 单条数据
      */
+    @GetMapping("/GetMsProjectTestinProjectTeam/{msProjectId}")
+    public MsProjectTestinProjectTeam getMsProjectTestinProjectTeam(@PathVariable String msProjectId) {
+        MsProjectTestinProjectTeam msProjectTestinProjectTeam=new MsProjectTestinProjectTeam();
+        msProjectTestinProjectTeam.setMsProjectId(msProjectId);
+//        TestCaseScriptInformation queryTestCaseScriptInformationByTestCaseId(String testCaseId)
+        return this.msProjectTestinProjectTeamService.queryIsHaveTestInProjectTeamByIdMsProject(msProjectTestinProjectTeam);
+    }
     /*@GetMapping("{id}")
     public ResponseEntity<MsProjectTestinProjectTeam> queryById(@PathVariable("id") String id) {
         return ResponseEntity.ok(this.msProjectTestinProjectTeamService.queryById());
