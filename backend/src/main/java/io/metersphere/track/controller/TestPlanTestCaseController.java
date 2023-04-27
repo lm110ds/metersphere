@@ -10,6 +10,7 @@ import io.metersphere.commons.utils.Pager;
 import io.metersphere.controller.request.ResetOrderRequest;
 import io.metersphere.log.annotation.MsAuditLog;
 import io.metersphere.track.dto.TestPlanCaseDTO;
+import io.metersphere.track.dto.TestPlanCaseDtoWithResultCategory;
 import io.metersphere.track.request.testcase.TestPlanCaseBatchRequest;
 import io.metersphere.track.request.testplancase.QueryTestPlanCaseRequest;
 import io.metersphere.track.request.testplancase.TestPlanFuncCaseBatchRequest;
@@ -72,8 +73,12 @@ public class TestPlanTestCaseController {
     }
 
     @GetMapping("/get/{caseId}")
-    public TestPlanCaseDTO getTestPlanCases(@PathVariable String caseId) {
-        return testPlanTestCaseService.get(caseId);
+//    public TestPlanCaseDTO getTestPlanCases(@PathVariable String caseId) {
+    public TestPlanCaseDtoWithResultCategory getTestPlanCases(@PathVariable String caseId) {
+        // 状态更新查询
+//        return testPlanTestCaseService.get(caseId);
+        // 返回的是 resultCategory 14种 resultCategory 的中文转到4种 还需询问
+        return testPlanTestCaseService.getWithResultCategory(caseId);
     }
 
     @PostMapping("recent/{count}")

@@ -1,6 +1,6 @@
 FROM metersphere/fabric8-java-alpine-openjdk8-jre
 
-LABEL maintainer="FIT2CLOUD <support@fit2cloud.com>"
+LABEL maintainer="hanlei32@faw.com.cn"
 
 ARG MS_VERSION=dev
 ARG DEPENDENCY=backend/target/dependency
@@ -16,5 +16,7 @@ ENV MS_VERSION=${MS_VERSION}
 ENV JAVA_OPTIONS="-Dfile.encoding=utf-8 -Djava.awt.headless=true"
 
 RUN mv /opt/lib/ms-jmeter-core*.jar /opt/lib/ms-jmeter-core.jar
+
+EXPOSE 8080
 
 CMD ["/deployments/run-java.sh"]

@@ -183,6 +183,15 @@ public class TestPlanTestCaseService {
         request.setExecutor(user.getId());
     }
 
+    public TestPlanCaseDtoWithResultCategory getWithResultCategory(String testPlanTestCaseId) {
+            TestPlanCaseDtoWithResultCategory testPlanCaseDtoWithResultCategory = extTestPlanTestCaseMapper.getWithResultCategory(testPlanTestCaseId);
+            List<TestCaseTestDTO> testCaseTestDTOS = extTestPlanTestCaseMapper.listTestCaseTest(testPlanCaseDtoWithResultCategory.getCaseId());
+            testCaseTestDTOS.forEach(dto -> {
+                setTestName(dto);
+            });
+            testPlanCaseDtoWithResultCategory.setList(testCaseTestDTOS);
+            return testPlanCaseDtoWithResultCategory;
+    }
     public TestPlanCaseDTO get(String testplanTestCaseId) {
         TestPlanCaseDTO testPlanCaseDTO = extTestPlanTestCaseMapper.get(testplanTestCaseId);
         List<TestCaseTestDTO> testCaseTestDTOS = extTestPlanTestCaseMapper.listTestCaseTest(testPlanCaseDTO.getCaseId());

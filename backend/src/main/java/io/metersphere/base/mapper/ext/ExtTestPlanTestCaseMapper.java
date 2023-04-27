@@ -2,10 +2,7 @@ package io.metersphere.base.mapper.ext;
 
 import io.metersphere.base.domain.TestCase;
 import io.metersphere.controller.request.BaseQueryRequest;
-import io.metersphere.track.dto.PlanReportCaseDTO;
-import io.metersphere.track.dto.TestCaseReportStatusResultDTO;
-import io.metersphere.track.dto.TestCaseTestDTO;
-import io.metersphere.track.dto.TestPlanCaseDTO;
+import io.metersphere.track.dto.*;
 import io.metersphere.track.request.testplancase.QueryTestPlanCaseRequest;
 import io.metersphere.track.request.testplancase.TestPlanFuncCaseConditions;
 import org.apache.ibatis.annotations.Param;
@@ -44,6 +41,7 @@ public interface ExtTestPlanTestCaseMapper {
     List<TestPlanCaseDTO> listTestCaseByProjectIds(@Param("ids") List<String> ids);
 
     TestPlanCaseDTO get(String testPlanTestCaseId);
+    TestPlanCaseDtoWithResultCategory getWithResultCategory(String testPlanTestCaseId);
 
     void deleteByTestCaseID(String id);
 
