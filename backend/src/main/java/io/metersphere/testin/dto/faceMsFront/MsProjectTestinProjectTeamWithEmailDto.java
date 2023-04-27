@@ -54,6 +54,8 @@ public class MsProjectTestinProjectTeamWithEmailDto implements Serializable {
     private Long createTime;
 
     private String descr;
+    //用这个进行精确或模糊查询
+    private String nameOrDescr;
     private String extend;
     private String productNo;
 

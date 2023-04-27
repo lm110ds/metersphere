@@ -4,11 +4,13 @@ import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import io.metersphere.commons.utils.PageUtils;
 import io.metersphere.commons.utils.Pager;
+import io.metersphere.controller.handler.annotation.NoResultHolder;
 import io.metersphere.testin.bo.QueryToObtainTheExecutionDetailsOfTheTestingReportGenerateBo;
 import io.metersphere.testin.dto.faceMsFront.EmailDto;
 import io.metersphere.testin.dto.faceMsFront.ToObtainTheExecutionDetailsOfTheTestingReportGenerateDto;
 import io.metersphere.testin.dto.faceTestInFront.CallBackTaskTestingOrCompletionMessageRequestDto;
 import io.metersphere.testin.service.TestPlanTestinTaskService;
+import io.metersphere.testin.util.ResponseEntity;
 import io.metersphere.testin.vo.TestPlanTestInTaskTokenReqIdCallbackUrlVo;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -80,16 +82,17 @@ public class TestPlanTestInTaskController {
         return ResponseEntity.ok(this.testPlanTestinTaskService.insert(testPlanTestinTask));
     }*/
     @PostMapping("/startTheTestInTask/{testPlanId}")
-    public TestPlanTestInTaskTokenReqIdCallbackUrlVo StartTheTestInTask(@PathVariable String testPlanId, @RequestBody EmailDto emailDto) throws UnsupportedEncodingException {
+    @NoResultHolder
+    public ResponseEntity StartTheTestInTask(@PathVariable String testPlanId, @RequestBody EmailDto emailDto) throws UnsupportedEncodingException {
 //        return ResponseEntity.ok(this.testPlanTestinTaskService.insert(testPlanTestinTask));
-        return this.testPlanTestinTaskService.getTestPlanTestInTaskTokenReqIdCallbackUrlVo(testPlanId,emailDto);
-//        TestPlanTestInTaskTokenReqIdCallbackUrlVo testPlanTestInTaskTokenReqIdCallbackUrlVo = this.testPlanTestinTaskService.getTestPlanTestInTaskTokenReqIdCallbackUrlVo(testPlanId,emailDto);
-        /*if (testPlanTestInTaskTokenReqIdCallbackUrlVo != null) {
-            return ApiResult.success(200,"启动成功",testPlanTestInTaskTokenReqIdCallbackUrlVo);
+//        return this.testPlanTestinTaskService.getTestPlanTestInTaskTokenReqIdCallbackUrlVo(testPlanId,emailDto);
+        TestPlanTestInTaskTokenReqIdCallbackUrlVo testPlanTestInTaskTokenReqIdCallbackUrlVo = this.testPlanTestinTaskService.getTestPlanTestInTaskTokenReqIdCallbackUrlVo(testPlanId,emailDto);
+        if (testPlanTestInTaskTokenReqIdCallbackUrlVo != null) {
+            return ResponseEntity.success("启动成功",testPlanTestInTaskTokenReqIdCallbackUrlVo);
         }else {
-            return ApiResult.error("该测试计划所属项目未关联TestIn项目组");
+            return ResponseEntity.error("该测试计划所属项目未关联TestIn项目组");
 //            return ResponseEntity.badRequest().body("该测试计划所属项目未关联TestIn项目组");
-        }*/
+        }
     }
     @PostMapping("/callback")
     public Object callback(@RequestBody CallBackTaskTestingOrCompletionMessageRequestDto callBackTaskTestingOrCompletionMessageRequestDto) {

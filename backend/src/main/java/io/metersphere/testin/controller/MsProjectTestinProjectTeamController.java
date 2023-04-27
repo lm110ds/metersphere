@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import io.metersphere.commons.exception.MSException;
 import io.metersphere.commons.utils.PageUtils;
 import io.metersphere.commons.utils.Pager;
+import io.metersphere.controller.handler.annotation.NoResultHolder;
 import io.metersphere.testin.dto.faceMsFront.MsProjectTestinProjectTeamWithEmailDto;
 import io.metersphere.testin.entity.MsProjectTestinProjectTeam;
 import io.metersphere.testin.service.MsProjectTestinProjectTeamService;
@@ -14,7 +15,11 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * (MsProjectTestinProjectTeam)表控制层
@@ -45,10 +50,47 @@ public class MsProjectTestinProjectTeamController {
     }*/
     @ApiModelProperty("查询企业下所有项目组列表")
     @PostMapping("/list/{goPage}/{pageSize}")
+    @NoResultHolder
 //    @RequiresPermissions("PROJECT_TRACK_PLAN:READ")
-    public Pager<List<MsProjectTestinProjectTeamCombinVo>> list(@PathVariable Integer goPage, @PathVariable Integer pageSize, @RequestBody MsProjectTestinProjectTeamWithEmailDto msProjectTestinProjectTeamWithEmailDto) {
-        com.github.pagehelper.Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
-        return PageUtils.setPageInfo(page, msProjectTestinProjectTeamService.listMsProjectTestinProjectTeam(goPage,pageSize,msProjectTestinProjectTeamWithEmailDto));
+//    public Pager<List<MsProjectTestinProjectTeamCombinVo>> list(@PathVariable Integer goPage, @PathVariable Integer pageSize, @RequestBody MsProjectTestinProjectTeamWithEmailDto msProjectTestinProjectTeamWithEmailDto) {
+    public Map<String, Object> list(@PathVariable Integer goPage, @PathVariable Integer pageSize, @RequestBody MsProjectTestinProjectTeamWithEmailDto msProjectTestinProjectTeamWithEmailDto) {
+//        com.github.pagehelper.Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        List<MsProjectTestinProjectTeamCombinVo> msProjectTestinProjectTeamCombinVos = msProjectTestinProjectTeamService.listMsProjectTestinProjectTeam(goPage, pageSize, msProjectTestinProjectTeamWithEmailDto);
+//        msProjectTestinProjectTeamCombinVos
+
+        /*msProjectTestinProjectTeamCombinVos.stream()
+                .filter(p ->
+                        (int) p.get("age") > 25 &&
+                                "女".equals(p.get("gender")))
+                .skip(start)     // 跳过前面的记录
+                .limit(pageSize)  // 取出指定数量的记录
+                .collect(Collectors.toList());
+        System.out.println(result2);*/
+        List<MsProjectTestinProjectTeamCombinVo> result3 = new ArrayList<>();
+        int start = (goPage - 1) * pageSize;  // 计算起始记录位置
+        if (StringUtils.isNotBlank(msProjectTestinProjectTeamWithEmailDto.getNameOrDescr())){
+            //List<MsProjectTestinProjectTeamCombinVo>
+            result3 = msProjectTestinProjectTeamCombinVos.stream()
+                    .filter(p ->
+                            (p.getName()).contains(msProjectTestinProjectTeamWithEmailDto.getNameOrDescr()) ||
+                                    ( p.getDescr()).contains(msProjectTestinProjectTeamWithEmailDto.getNameOrDescr()))
+                    .skip(start)     // 跳过前面的记录
+                    .limit(pageSize)  // 取出指定数量的记录
+                    .collect(Collectors.toList());
+        }else {
+            result3=msProjectTestinProjectTeamCombinVos;
+        }
+        // 3. 模糊查询名字或性别包含 "五" 的Person
+
+
+        int totalPages = (int) Math.ceil((double) result3.size() / pageSize);
+        Map<String, Object> result = new HashMap<>();
+        result.put("data", result3);
+        result.put("totalPages", totalPages);
+        result.put("pageNum", goPage);
+        result.put("pageSize", pageSize);
+        return result;
+//        return PageUtils.setPageInfo(page, msProjectTestinProjectTeamService.listMsProjectTestinProjectTeam(goPage,pageSize,msProjectTestinProjectTeamWithEmailDto));
     }
 
     /**
