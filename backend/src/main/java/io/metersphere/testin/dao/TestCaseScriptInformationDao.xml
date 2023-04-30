@@ -12,8 +12,9 @@
         <result property="testInProjectId" column="test_in_project_id" jdbcType="VARCHAR"/>
         <result property="scriptUpdateUserid" column="script_update_userid" jdbcType="INTEGER"/>
         <result property="scriptUpdateDesc" column="script_update_desc" jdbcType="VARCHAR"/>
-        <result property="channelId" column="channel_id" jdbcType="VARCHAR"/>
         <result property="appName" column="app_name" jdbcType="VARCHAR"/>
+        <result property="channelId" column="channel_id" jdbcType="VARCHAR"/>
+        <result property="scriptName" column="script_name" jdbcType="VARCHAR"/>
         <result property="coverInstall" column="cover_install" jdbcType="INTEGER"/>
         <result property="cleanData" column="clean_data" jdbcType="INTEGER"/>
         <result property="keepApp" column="keep_app" jdbcType="INTEGER"/>
@@ -32,8 +33,9 @@
                test_in_project_id,
                script_update_userid,
                script_update_desc,
-               channel_id,
                app_name,
+               channel_id,
+               script_name,
                cover_install,
                clean_data,
                keep_app,
@@ -52,8 +54,9 @@
                test_in_project_id,
                script_update_userid,
                script_update_desc,
-               channel_id,
                app_name,
+               channel_id,
+               script_name,
                cover_install,
                clean_data,
                keep_app,
@@ -68,8 +71,8 @@
     <select id="queryAllByLimit" resultMap="TestCaseScriptInformationMap">
         select
         test_case_id, script_id, script_no, script_create_user, script_create_desc, test_in_project_id,
-        script_update_userid, script_update_desc, channel_id, app_name, cover_install, clean_data, keep_app,
-        result_category, script_create_time, script_update_time
+        script_update_userid, script_update_desc, app_name, channel_id, script_name, cover_install, clean_data,
+        keep_app, result_category, script_create_time, script_update_time
         from test_case_script_information
         <where>
             <if test="testCaseId != null and testCaseId != ''">
@@ -96,11 +99,14 @@
             <if test="scriptUpdateDesc != null and scriptUpdateDesc != ''">
                 and script_update_desc = #{scriptUpdateDesc}
             </if>
+            <if test="appName != null and appName != ''">
+                and app_name = #{appName}
+            </if>
             <if test="channelId != null and channelId != ''">
                 and channel_id = #{channelId}
             </if>
-            <if test="appName != null and appName != ''">
-                and app_name = #{appName}
+            <if test="scriptName != null and scriptName != ''">
+                and script_name = #{scriptName}
             </if>
             <if test="coverInstall != null">
                 and cover_install = #{coverInstall}
@@ -126,8 +132,8 @@
     <select id="queryAll" resultMap="TestCaseScriptInformationMap">
         select
         test_case_id, script_id, script_no, script_create_user, script_create_desc, test_in_project_id,
-        script_update_userid, script_update_desc, channel_id, app_name, cover_install, clean_data, keep_app,
-        result_category, script_create_time, script_update_time
+        script_update_userid, script_update_desc, app_name, channel_id, script_name, cover_install, clean_data,
+        keep_app, result_category, script_create_time, script_update_time
         from test_case_script_information
         <where>
             <if test="testCaseId != null and testCaseId != ''">
@@ -154,11 +160,14 @@
             <if test="scriptUpdateDesc != null and scriptUpdateDesc != ''">
                 and script_update_desc = #{scriptUpdateDesc}
             </if>
+            <if test="appName != null and appName != ''">
+                and app_name = #{appName}
+            </if>
             <if test="channelId != null and channelId != ''">
                 and channel_id = #{channelId}
             </if>
-            <if test="appName != null and appName != ''">
-                and app_name = #{appName}
+            <if test="scriptName != null and scriptName != ''">
+                and script_name = #{scriptName}
             </if>
             <if test="coverInstall != null">
                 and cover_install = #{coverInstall}
@@ -183,8 +192,8 @@
     <select id="queryScriptDesc" resultMap="TestCaseScriptInformationMap">
         select
         test_case_id, script_id, script_no, script_create_user, script_create_desc, test_in_project_id,
-        script_update_userid, script_update_desc, channel_id, app_name, cover_install, clean_data, keep_app,
-        result_category, script_create_time, script_update_time
+        script_update_userid, script_update_desc, app_name, channel_id, script_name, cover_install, clean_data,
+        keep_app, result_category, script_create_time, script_update_time
         from test_case_script_information
         <where>
             <if test="testCaseId != null and testCaseId != ''">
@@ -199,23 +208,26 @@
             <if test="scriptCreateUser != null">
                 and script_create_user = #{scriptCreateUser}
             </if>
-<!--            <if test="scriptCreateDesc != null and scriptCreateDesc != ''">-->
-<!--                and script_create_desc = #{scriptCreateDesc}-->
-<!--            </if>-->
+            <!--<if test="scriptCreateDesc != null and scriptCreateDesc != ''">
+                and script_create_desc = #{scriptCreateDesc}
+            </if>-->
             <if test="testInProjectId != null and testInProjectId != ''">
                 and test_in_project_id = #{testInProjectId}
             </if>
             <if test="scriptUpdateUserid != null">
                 and script_update_userid = #{scriptUpdateUserid}
             </if>
-<!--            <if test="scriptUpdateDesc != null and scriptUpdateDesc != ''">-->
-<!--                and script_update_desc = #{scriptUpdateDesc}-->
-<!--            </if>-->
+            <!--<if test="scriptUpdateDesc != null and scriptUpdateDesc != ''">
+                and script_update_desc = #{scriptUpdateDesc}
+            </if>-->
+            <if test="appName != null and appName != ''">
+                and app_name = #{appName}
+            </if>
             <if test="channelId != null and channelId != ''">
                 and channel_id = #{channelId}
             </if>
-            <if test="appName != null and appName != ''">
-                and app_name = #{appName}
+            <if test="scriptName != null and scriptName != ''">
+                and script_name = #{scriptName}
             </if>
             <if test="coverInstall != null">
                 and cover_install = #{coverInstall}
@@ -247,10 +259,9 @@
                     </if>
                 </trim>
             </if>
-
         </where>
-
     </select>
+
     <!--统计总行数-->
     <select id="count" resultType="java.lang.Long">
         select count(1)
@@ -280,11 +291,14 @@
             <if test="scriptUpdateDesc != null and scriptUpdateDesc != ''">
                 and script_update_desc = #{scriptUpdateDesc}
             </if>
+            <if test="appName != null and appName != ''">
+                and app_name = #{appName}
+            </if>
             <if test="channelId != null and channelId != ''">
                 and channel_id = #{channelId}
             </if>
-            <if test="appName != null and appName != ''">
-                and app_name = #{appName}
+            <if test="scriptName != null and scriptName != ''">
+                and script_name = #{scriptName}
             </if>
             <if test="coverInstall != null">
                 and cover_install = #{coverInstall}
@@ -311,38 +325,39 @@
     <insert id="insert" useGeneratedKeys="true">
         insert into test_case_script_information(test_case_id, script_id, script_no, script_create_user,
                                                  script_create_desc, test_in_project_id, script_update_userid,
-                                                 script_update_desc, channel_id, app_name, cover_install, clean_data,
-                                                 keep_app, result_category, script_create_time, script_update_time)
+                                                 script_update_desc, app_name, channel_id, script_name, cover_install,
+                                                 clean_data, keep_app, result_category, script_create_time,
+                                                 script_update_time)
         values (#{testCaseId}, #{scriptId}, #{scriptNo}, #{scriptCreateUser}, #{scriptCreateDesc}, #{testInProjectId},
-                #{scriptUpdateUserid}, #{scriptUpdateDesc}, #{channelId}, #{appName}, #{coverInstall}, #{cleanData},
-                #{keepApp}, #{resultCategory}, #{scriptCreateTime}, #{scriptUpdateTime})
+                #{scriptUpdateUserid}, #{scriptUpdateDesc}, #{appName}, #{channelId}, #{scriptName}, #{coverInstall},
+                #{cleanData}, #{keepApp}, #{resultCategory}, #{scriptCreateTime}, #{scriptUpdateTime})
     </insert>
 
     <insert id="insertBatch" keyProperty="" useGeneratedKeys="true">
         insert into test_case_script_information(test_case_id, script_id, script_no, script_create_user,
-        script_create_desc, test_in_project_id, script_update_userid, script_update_desc, channel_id, app_name,
-        cover_install, clean_data, keep_app, result_category, script_create_time, script_update_time)
+        script_create_desc, test_in_project_id, script_update_userid, script_update_desc, app_name, channel_id,
+        script_name, cover_install, clean_data, keep_app, result_category, script_create_time, script_update_time)
         values
         <foreach collection="entities" item="entity" separator=",">
             (#{entity.testCaseId}, #{entity.scriptId}, #{entity.scriptNo}, #{entity.scriptCreateUser},
             #{entity.scriptCreateDesc}, #{entity.testInProjectId}, #{entity.scriptUpdateUserid},
-            #{entity.scriptUpdateDesc}, #{entity.channelId}, #{entity.appName}, #{entity.coverInstall},
-            #{entity.cleanData}, #{entity.keepApp}, #{entity.resultCategory}, #{entity.scriptCreateTime},
-            #{entity.scriptUpdateTime})
+            #{entity.scriptUpdateDesc}, #{entity.appName}, #{entity.channelId}, #{entity.scriptName},
+            #{entity.coverInstall}, #{entity.cleanData}, #{entity.keepApp}, #{entity.resultCategory},
+            #{entity.scriptCreateTime}, #{entity.scriptUpdateTime})
         </foreach>
     </insert>
 
     <insert id="insertOrUpdateBatch" keyProperty="" useGeneratedKeys="true">
         insert into test_case_script_information(test_case_id, script_id, script_no, script_create_user,
-        script_create_desc, test_in_project_id, script_update_userid, script_update_desc, channel_id, app_name,
-        cover_install, clean_data, keep_app, result_category, script_create_time, script_update_time)
+        script_create_desc, test_in_project_id, script_update_userid, script_update_desc, app_name, channel_id,
+        script_name, cover_install, clean_data, keep_app, result_category, script_create_time, script_update_time)
         values
         <foreach collection="entities" item="entity" separator=",">
             (#{entity.testCaseId}, #{entity.scriptId}, #{entity.scriptNo}, #{entity.scriptCreateUser},
             #{entity.scriptCreateDesc}, #{entity.testInProjectId}, #{entity.scriptUpdateUserid},
-            #{entity.scriptUpdateDesc}, #{entity.channelId}, #{entity.appName}, #{entity.coverInstall},
-            #{entity.cleanData}, #{entity.keepApp}, #{entity.resultCategory}, #{entity.scriptCreateTime},
-            #{entity.scriptUpdateTime})
+            #{entity.scriptUpdateDesc}, #{entity.appName}, #{entity.channelId}, #{entity.scriptName},
+            #{entity.coverInstall}, #{entity.cleanData}, #{entity.keepApp}, #{entity.resultCategory},
+            #{entity.scriptCreateTime}, #{entity.scriptUpdateTime})
         </foreach>
         on duplicate key update
         test_case_id = values(test_case_id),
@@ -353,8 +368,9 @@
         test_in_project_id = values(test_in_project_id),
         script_update_userid = values(script_update_userid),
         script_update_desc = values(script_update_desc),
-        channel_id = values(channel_id),
         app_name = values(app_name),
+        channel_id = values(channel_id),
+        script_name = values(script_name),
         cover_install = values(cover_install),
         clean_data = values(clean_data),
         keep_app = values(keep_app),
@@ -391,11 +407,14 @@
             <if test="scriptUpdateDesc != null and scriptUpdateDesc != ''">
                 script_update_desc = #{scriptUpdateDesc},
             </if>
+            <if test="appName != null and appName != ''">
+                app_name = #{appName},
+            </if>
             <if test="channelId != null and channelId != ''">
                 channel_id = #{channelId},
             </if>
-            <if test="appName != null and appName != ''">
-                app_name = #{appName},
+            <if test="scriptName != null and scriptName != ''">
+                script_name = #{scriptName},
             </if>
             <if test="coverInstall != null">
                 cover_install = #{coverInstall},
@@ -418,6 +437,7 @@
         </set>
         where test_case_id = #{testCaseId,jdbcType=VARCHAR}
     </update>
+
     <update id="updateBatchSelective" parameterType="java.util.List">
         update test_case_script_information
         <trim prefix="set" suffixOverrides=",">

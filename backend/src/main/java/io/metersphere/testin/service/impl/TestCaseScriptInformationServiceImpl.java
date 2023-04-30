@@ -177,6 +177,67 @@ public class TestCaseScriptInformationServiceImpl implements TestCaseScriptInfor
         }
         return result;
     }
+    @Override
+    public List<TestCaseScriptInformationCombinVo> listWithAppNameOrScriptNameTestCaseScriptInformation(int goPage, int pageSize, TestCaseScriptInformationWithEmailDto testCaseScriptInformationWithEmailDto) {
+        List<TestCaseScriptInformationCombinVo> result=new ArrayList<>();
+        String testCaseId = testCaseScriptInformationWithEmailDto.getTestCaseId();
+        String msProjectId=getProjectIdByTestCaseId(testCaseId);
+        if (StringUtils.isEmpty(msProjectId)) {
+            MSException.throwException("测试用例不在ms项目组下,非法的测试用例");
+        }else {
+            MsProjectTestinProjectTeam msProjectTestinProjectTeam = msProjectTestinProjectTeamDao.queryIsHaveTestInProjectTeamByIdMsProject(msProjectId);
+            if (msProjectTestinProjectTeam.getTestInProjectId() != null) {
+                /*TestCaseScriptInformation testCaseScriptInformation=TestCaseScriptInformation.builder()
+                        .testCaseId(testCaseScriptInformationWithEmailDto.getTestCaseId())
+                        .scriptNo(testCaseScriptInformationWithEmailDto.getScriptNo())
+                        .scriptId(testCaseScriptInformationWithEmailDto.getScriptId())
+                        .scriptCreateUser(testCaseScriptInformationWithEmailDto.getScriptCreateUser())
+                        .scriptCreateDesc(testCaseScriptInformationWithEmailDto.getScriptCreateDesc())
+                        .testInProjectId(testCaseScriptInformationWithEmailDto.getTestInProjectId())
+                        .scriptUpdateUserid(testCaseScriptInformationWithEmailDto.getScriptUpdateUserid())
+                        .scriptUpdateDesc(testCaseScriptInformationWithEmailDto.getScriptUpdateDesc())
+                        .channelId(testCaseScriptInformationWithEmailDto.getChannelId())
+                        .scriptCreateTime(testCaseScriptInformationWithEmailDto.getScriptCreateTime())
+                        .scriptUpdateTime(testCaseScriptInformationWithEmailDto.getScriptUpdateTime())
+                        .appName(testCaseScriptInformationWithEmailDto.getAppName())
+                        .build();*/
+                TestCaseScriptInformationScriptDesc testCaseScriptInformationScriptDesc=new TestCaseScriptInformationScriptDesc();
+                testCaseScriptInformationScriptDesc.setScriptDesc(testCaseScriptInformationWithEmailDto.getScriptDesc());
+                testCaseScriptInformationScriptDesc.setTestCaseId(testCaseScriptInformationWithEmailDto.getTestCaseId());
+                testCaseScriptInformationScriptDesc.setScriptNo(testCaseScriptInformationWithEmailDto.getScriptNo());
+                testCaseScriptInformationScriptDesc.setScriptId(testCaseScriptInformationWithEmailDto.getScriptId());
+                testCaseScriptInformationScriptDesc.setScriptCreateUser(testCaseScriptInformationWithEmailDto.getScriptCreateUser());
+                testCaseScriptInformationScriptDesc.setTestInProjectId(testCaseScriptInformationWithEmailDto.getTestInProjectId());
+                testCaseScriptInformationScriptDesc.setScriptUpdateUserid(testCaseScriptInformationWithEmailDto.getScriptUpdateUserid());
+                testCaseScriptInformationScriptDesc.setChannelId(testCaseScriptInformationWithEmailDto.getChannelId());
+                testCaseScriptInformationScriptDesc.setScriptCreateTime(testCaseScriptInformationWithEmailDto.getScriptCreateTime());
+                testCaseScriptInformationScriptDesc.setScriptUpdateTime(testCaseScriptInformationWithEmailDto.getScriptUpdateTime());
+                testCaseScriptInformationScriptDesc.setAppName(testCaseScriptInformationWithEmailDto.getAppName());
+                testCaseScriptInformationScriptDesc.setScriptName(testCaseScriptInformationWithEmailDto.getScriptName());
+
+//                List<TestCaseScriptInformation> msTestCaseScriptInformationFromDb = this.testCaseScriptInformationDao.queryAll(testCaseScriptInformation);
+                List<TestCaseScriptInformation> msTestCaseScriptInformationFromDb = this.testCaseScriptInformationDao.queryScriptDesc(testCaseScriptInformationScriptDesc);
+
+                List<TestCaseScriptInformation> msTestCaseScriptInformationFromQueryTestIn = testInApiExecutor.queryTestCaseScriptInformationFromQueryTestIn(goPage, pageSize, msProjectTestinProjectTeam.getTestInProjectId(),testCaseScriptInformationWithEmailDto);
+
+                if (CollectionUtils.isNotEmpty(msTestCaseScriptInformationFromDb)) {
+                    if (CollectionUtils.isNotEmpty(msTestCaseScriptInformationFromQueryTestIn)) {
+                        //包装，返从testIn那边查到的结果和数据查的结果并级
+                        result= msTestCaseScriptInformationFromQueryTestInWrap(msTestCaseScriptInformationFromDb.get(0),msTestCaseScriptInformationFromQueryTestIn);
+                    }
+                }else{
+                    if (CollectionUtils.isNotEmpty(msTestCaseScriptInformationFromQueryTestIn)) {
+                        //包装，直接返从testIn那边查到的结果
+                        result= msTestCaseScriptInformationFromQueryTestInStraight(msTestCaseScriptInformationFromQueryTestIn);
+                    }
+                }
+
+            }else {
+                MSException.throwException("该用例所属项目未关联testIn项目组");
+            }
+        }
+        return result;
+    }
 
     @Override
     public List<TestCaseScriptInformation> queryAll(TestCaseScriptInformation testCaseScriptInformation) {

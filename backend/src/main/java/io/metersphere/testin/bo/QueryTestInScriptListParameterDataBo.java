@@ -27,6 +27,7 @@ public class QueryTestInScriptListParameterDataBo implements Serializable {
         private Integer totalRow;
         private Integer pageSize;
         private Integer page;
+        private Integer totalPage;
         private List<ScriptInformationResultFromRequest> list;
 
     }

@@ -74,7 +74,8 @@ public class MsProjectTestinProjectTeamController {
             result3 = msProjectTestinProjectTeamCombinVos.stream()
                     .filter(p ->
                             (p.getName()).contains(msProjectTestinProjectTeamWithEmailDto.getNameOrDescr()) ||
-                                    (StringUtils.isNotBlank(p.getDescr())&&( p.getDescr()).contains(msProjectTestinProjectTeamWithEmailDto.getNameOrDescr())))
+                                    (StringUtils.isNotBlank(p.getDescr())&&( p.getDescr()).contains(msProjectTestinProjectTeamWithEmailDto.getNameOrDescr()))
+                    )
                     .skip(start)     // 跳过前面的记录
                     .limit(pageSize)  // 取出指定数量的记录
                     .collect(Collectors.toList());

@@ -57,7 +57,7 @@ public class TestCaseScriptInformation implements Serializable {
     private String channelId;
 
     private String appName;
-
+    private String scriptName;
     /**
      * 脚本执行策略:覆盖安装 指脚本执行完是否要覆盖安装1：要覆盖 0：不覆盖
      */

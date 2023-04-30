@@ -61,8 +61,8 @@ public interface TestCaseScriptInformationService {
     boolean deleteById(String testCaseId);
 
 
-    List<TestCaseScriptInformationCombinVo> listTestCaseScriptInformation(int goPage, int pageSize
-            , TestCaseScriptInformationWithEmailDto request);
+    List<TestCaseScriptInformationCombinVo> listTestCaseScriptInformation(int goPage, int pageSize, TestCaseScriptInformationWithEmailDto request);
+    List<TestCaseScriptInformationCombinVo> listWithAppNameOrScriptNameTestCaseScriptInformation(int goPage, int pageSize, TestCaseScriptInformationWithEmailDto request);
 
     List<TestCaseScriptInformation> queryAll(TestCaseScriptInformation testCaseScriptInformation);
 }

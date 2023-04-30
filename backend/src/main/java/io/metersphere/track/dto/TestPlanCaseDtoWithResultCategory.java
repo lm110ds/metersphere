@@ -56,18 +56,17 @@ public class TestPlanCaseDtoWithResultCategory extends TestPlanCaseDTO {    //Wi
         put("启动失败", TestPlanTestCaseStatus.Failure.name());
         put("运行失败", TestPlanTestCaseStatus.Failure.name());
         put("monkey失败", TestPlanTestCaseStatus.Failure.name());
+        put("应用崩溃", TestPlanTestCaseStatus.Failure.name());
+        put("脚本错误", TestPlanTestCaseStatus.Failure.name());
+        put("应用无响应", TestPlanTestCaseStatus.Failure.name());
 
         put("忽略", TestPlanTestCaseStatus.Skip.name());
+        put("取消", TestPlanTestCaseStatus.Skip.name());
 
         put("功能异常", TestPlanTestCaseStatus.Blocking.name());
         put("未执行", TestPlanTestCaseStatus.Blocking.name());
         put("超时", TestPlanTestCaseStatus.Blocking.name());
-        put("取消", TestPlanTestCaseStatus.Blocking.name());
-
         put("警告", TestPlanTestCaseStatus.Blocking.name());
-        put("应用崩溃", TestPlanTestCaseStatus.Blocking.name());
-        put("脚本错误", TestPlanTestCaseStatus.Blocking.name());
-        put("应用无响应", TestPlanTestCaseStatus.Blocking.name());
         put("环境异常", TestPlanTestCaseStatus.Blocking.name());
         put("","");
     }};

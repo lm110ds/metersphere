@@ -243,7 +243,7 @@ public class TestInApiExecutor {
                         .timestamp(System.currentTimeMillis())
                         .build();
                 QueryTheListOfProjectGroupsUnderTheEnterpriseBo responseLoopI = doPostResponse(requestUrl, queryTheListOfProjectGroupsUnderTheEnterpriseDtoLoopI, QueryTheListOfProjectGroupsUnderTheEnterpriseBo.class);
-                if (response.isSuccess()) {
+                if (responseLoopI.isSuccess()) {
                     QueryTheListOfProjectGroupsUnderTheEnterpriseBo.RequestTestInResultData requestTestInResultDataLoopI = responseLoopI.getData();
 //                    Integer totalPage =requestTestInResultData.getTotalPage();
                     List<QueryTheListOfProjectGroupsUnderTheEnterpriseBo.TestInProjectGroup> listLoopI = requestTestInResultDataLoopI.getList();
@@ -272,7 +272,7 @@ public class TestInApiExecutor {
     }
 
     public List<TestCaseScriptInformation> queryTestCaseScriptInformationFromQueryTestIn(int goPage, int pageSize, Integer testInProjectId, TestCaseScriptInformationWithEmailDto testCaseScriptInformation) {
-//        List<TestCaseScriptInformation> result=new ArrayList<>();
+        List<TestCaseScriptInformation> result=new ArrayList<>();
         QueryTheListOfTestingScriptsDto queryTheListOfTestingScriptsDto=QueryTheListOfTestingScriptsDto.
                 builder()
                 .apikey(apikey)
@@ -290,46 +290,98 @@ public class TestInApiExecutor {
                                 .scriptType(1)
                                 .scriptNo(null!=testCaseScriptInformation.getScriptNo()?testCaseScriptInformation.getScriptNo():null)
                                 .projectId(testInProjectId)           //"用例关联的项目-项目关联的项目组"
-                                .startPageNo(goPage)
-                                .pageSize(pageSize)
+                                .startPageNo(1)
+                                .pageSize(999)
                                 .build()
                 )
                 .action("script")
                 .timestamp(System.currentTimeMillis())
                 .build();
 //        String requestUrl = "openapi.pro.testin.cn";
-        return GetQueryTestCaseScriptInformationFromQueryTestInUrl(requestUrl, queryTheListOfTestingScriptsDto, QueryTestInScriptListParameterDataBo.class);
-        //范例改到表格上
-        /*QueryTestInScriptListParameterDataBo response = doPostResponse(requestUrl, queryTheListOfTestingScriptsDto, QueryTestInScriptListParameterDataBo.class);
+        QueryTestInScriptListParameterDataBo response = doPostResponse(requestUrl, queryTheListOfTestingScriptsDto, QueryTestInScriptListParameterDataBo.class);
         if (response.isSuccess()) {
             QueryTestInScriptListParameterDataBo.GetScriptRequestTestInData getScriptRequestTestInData = response.getData();
+            Integer totalPage =getScriptRequestTestInData.getPage();
             List<QueryTestInScriptListParameterDataBo.ScriptInformationResultFromRequest> list = getScriptRequestTestInData.getList();
             if (CollectionUtils.isNotEmpty(list)) {
                 for (QueryTestInScriptListParameterDataBo.ScriptInformationResultFromRequest scriptInformationResultFromRequest : list) {
                     result.add(
                             TestCaseScriptInformation.builder()
-                            .scriptId(scriptInformationResultFromRequest.getScriptid())
-                            .scriptNo(scriptInformationResultFromRequest.getScriptNo())
-                            .scriptCreateUser(scriptInformationResultFromRequest.getScriptCreateUser())
+                                    .scriptId(scriptInformationResultFromRequest.getScriptid())
+                                    .scriptNo(scriptInformationResultFromRequest.getScriptNo())
+                                    .scriptCreateUser(scriptInformationResultFromRequest.getScriptCreateUser())
 
-                            .testInProjectId(scriptInformationResultFromRequest.getProjectId())
+                                    .testInProjectId(scriptInformationResultFromRequest.getProjectId())
 
-                            .scriptUpdateUserid(scriptInformationResultFromRequest.getScriptUpdateUserid())
+                                    .scriptUpdateUserid(scriptInformationResultFromRequest.getScriptUpdateUserid())
 
-                            .scriptUpdateDesc(scriptInformationResultFromRequest.getScriptUpdateDesc())
-
-                            .channelId(scriptInformationResultFromRequest.getChannelId())
-                            .appinfo(scriptInformationResultFromRequest.getAppinfo())
-                            .scriptCreateTime(scriptInformationResultFromRequest.getScriptCreateTime())
-                            .scriptUpdateTime(scriptInformationResultFromRequest.getScriptUpdateTime())
-                            .build()
+                                    .scriptUpdateDesc(scriptInformationResultFromRequest.getScriptUpdateDesc())
+                                    .appName(scriptInformationResultFromRequest.getAppinfo()!=null?scriptInformationResultFromRequest.getAppinfo().getAppName():null)
+                                    .scriptName(scriptInformationResultFromRequest.getScriptName())
+                                    .channelId(scriptInformationResultFromRequest.getChannelId())
+//                                    .appinfo(scriptInformationResultFromRequest.getAppinfo())
+                                    .scriptCreateTime(scriptInformationResultFromRequest.getScriptCreateTime())
+                                    .scriptUpdateTime(scriptInformationResultFromRequest.getScriptUpdateTime())
+                                    .build()
                     );
-                    //testInProjectGroup  反序列化将一个对象转化为另一个对象
-                    //result.add(JackJsonUtils.obj2pojo(testInProjectGroup, TestCaseScriptInformation.class));
+                }
+                for (int i = getScriptRequestTestInData.getPage()+1; totalPage!=null&&i <= totalPage; i++) {
+                    QueryTheListOfTestingScriptsDto queryTheListOfTestingScriptsDtoLoopI=QueryTheListOfTestingScriptsDto.
+                            builder()
+                            .apikey(apikey)
+                            .mkey("script")
+                            .op("Script.listScriptFile")
+                            .data(
+                                    QueryTheListOfTestingScriptsDto.QueryTestinScriptListParameterData
+                                            .builder()
+                                            .onlineUserInfo(
+                                                    QueryTheListOfTestingScriptsDto.OnlineUserInfo.builder()
+                                                            .email(StringUtils.isNotBlank(testCaseScriptInformation.getEmail()) ?testCaseScriptInformation.getEmail():getEmailFromMs())
+                                                            .build()
+                                            )
+                                            .scriptDesc(StringUtils.isNotEmpty(testCaseScriptInformation.getScriptDesc())?testCaseScriptInformation.getScriptDesc():null)
+                                            .scriptType(1)
+                                            .scriptNo(null!=testCaseScriptInformation.getScriptNo()?testCaseScriptInformation.getScriptNo():null)
+                                            .projectId(testInProjectId)           //"用例关联的项目-项目关联的项目组"
+                                            .startPageNo(i)
+                                            .pageSize(999)
+                                            .build()
+                            )
+                            .action("script")
+                            .timestamp(System.currentTimeMillis())
+                            .build();
+                    QueryTestInScriptListParameterDataBo responseLoopI = doPostResponse(requestUrl, queryTheListOfTestingScriptsDtoLoopI, QueryTestInScriptListParameterDataBo.class);
+                    if (responseLoopI.isSuccess()) {
+                        QueryTestInScriptListParameterDataBo.GetScriptRequestTestInData getScriptRequestTestInDataLoopI = response.getData();
+                        List<QueryTestInScriptListParameterDataBo.ScriptInformationResultFromRequest> listLoopI = getScriptRequestTestInDataLoopI.getList();
+                        if (CollectionUtils.isNotEmpty(listLoopI)) {
+                            for (QueryTestInScriptListParameterDataBo.ScriptInformationResultFromRequest scriptInformationResultFromRequest : listLoopI) {
+                                result.add(
+                                        TestCaseScriptInformation.builder()
+                                                .scriptId(scriptInformationResultFromRequest.getScriptid())
+                                                .scriptNo(scriptInformationResultFromRequest.getScriptNo())
+                                                .scriptCreateUser(scriptInformationResultFromRequest.getScriptCreateUser())
+
+                                                .testInProjectId(scriptInformationResultFromRequest.getProjectId())
+
+                                                .scriptUpdateUserid(scriptInformationResultFromRequest.getScriptUpdateUserid())
+
+                                                .scriptUpdateDesc(scriptInformationResultFromRequest.getScriptUpdateDesc())
+                                                .appName(scriptInformationResultFromRequest.getAppinfo()!=null?scriptInformationResultFromRequest.getAppinfo().getAppName():null)
+                                                .scriptName(scriptInformationResultFromRequest.getScriptName())
+                                                .channelId(scriptInformationResultFromRequest.getChannelId())
+                                                .scriptCreateTime(scriptInformationResultFromRequest.getScriptCreateTime())
+                                                .scriptUpdateTime(scriptInformationResultFromRequest.getScriptUpdateTime())
+                                                .build()
+                                );
+                            }
+                        }
+                    }
                 }
             }
         }
-        return result;*/
+        return result;
+        //return GetQueryTestCaseScriptInformationFromQueryTestInUrl(requestUrl, queryTheListOfTestingScriptsDto, QueryTestInScriptListParameterDataBo.class);
     }
 
     private List<TestCaseScriptInformation> GetQueryTestCaseScriptInformationFromQueryTestInUrl(String requestUrl, QueryTheListOfTestingScriptsDto queryTheListOfTestingScriptsDto, Class<QueryTestInScriptListParameterDataBo> queryTestInScriptListParameterDataBoClass) {
@@ -352,6 +404,7 @@ public class TestInApiExecutor {
 
                                     .scriptUpdateDesc(scriptInformationResultFromRequest.getScriptUpdateDesc())
                                     .appName(scriptInformationResultFromRequest.getAppinfo()!=null?scriptInformationResultFromRequest.getAppinfo().getAppName():null)
+                                    .scriptName(scriptInformationResultFromRequest.getScriptName())
                                     .channelId(scriptInformationResultFromRequest.getChannelId())
 //                                    .appinfo(scriptInformationResultFromRequest.getAppinfo())
                                     .scriptCreateTime(scriptInformationResultFromRequest.getScriptCreateTime())
@@ -513,8 +566,8 @@ public class TestInApiExecutor {
                                 .projectid(toObtainTheExecutionDetailsOfTheTestingReportGenerateDto.getProjectid())
                                 .taskid(toObtainTheExecutionDetailsOfTheTestingReportGenerateDto.getTaskid())
                                 .resultCategorys(resultCategoryListCollect)
-                                .page(goPage)
-                                .pageSize(pageSize)
+                                .page(1)
+                                .pageSize(999)
                                 .onlineUserInfo(QueryToObtainTheExecutionDetailsOfTheTestingReportDto.OnlineUserInfo.builder()
                                         .email(StringUtils.isNotBlank(toObtainTheExecutionDetailsOfTheTestingReportGenerateDto.getEmail()) ?toObtainTheExecutionDetailsOfTheTestingReportGenerateDto.getEmail():getEmailFromMs())
                                         .build())
@@ -529,6 +582,41 @@ public class TestInApiExecutor {
         if (response.isSuccess()) {
             QueryToObtainTheExecutionDetailsOfTheTestingReportGenerateBo.RequestTestInResultData requestTestInResultData = response.getData();
             if (requestTestInResultData != null) {
+                Integer totalPage =requestTestInResultData.getTotalPage();
+                for (int i = requestTestInResultData.getPage()+1; i <= totalPage; i++) {
+                    QueryToObtainTheExecutionDetailsOfTheTestingReportDto queryToObtainTheExecutionDetailsOfTheExecutionDetailLoopI=QueryToObtainTheExecutionDetailsOfTheTestingReportDto
+                            .builder()
+                            .apikey(apikey)
+                            .mkey("realtest")
+                            .op("Report.list")
+                            .sid(token)
+                            .data(
+                                    QueryToObtainTheExecutionDetailsOfTheTestingReportDto.RequestTestInData
+                                            .builder()
+                                            .projectid(toObtainTheExecutionDetailsOfTheTestingReportGenerateDto.getProjectid())
+                                            .taskid(toObtainTheExecutionDetailsOfTheTestingReportGenerateDto.getTaskid())
+                                            .resultCategorys(resultCategoryListCollect)
+                                            .page(i)
+                                            .pageSize(999)
+                                            .onlineUserInfo(QueryToObtainTheExecutionDetailsOfTheTestingReportDto.OnlineUserInfo.builder()
+                                                    .email(StringUtils.isNotBlank(toObtainTheExecutionDetailsOfTheTestingReportGenerateDto.getEmail()) ?toObtainTheExecutionDetailsOfTheTestingReportGenerateDto.getEmail():getEmailFromMs())
+                                                    .build())
+                                            .build()
+                            )
+                            .action("analysis")
+                            .timestamp(System.currentTimeMillis())
+                            .build();
+                    QueryToObtainTheExecutionDetailsOfTheTestingReportGenerateBo responseLoopI = doPostResponse(requestUrl, queryToObtainTheExecutionDetailsOfTheExecutionDetailLoopI, QueryToObtainTheExecutionDetailsOfTheTestingReportGenerateBo.class);
+                    if (responseLoopI.isSuccess()) {
+                        QueryToObtainTheExecutionDetailsOfTheTestingReportGenerateBo.RequestTestInResultData requestTestInResultDataLoopI = responseLoopI.getData();
+//                    Integer totalPage =requestTestInResultData.getTotalPage();
+                        List<QueryToObtainTheExecutionDetailsOfTheTestingReportGenerateBo.TestInProjectGroupTask> listLoopI = requestTestInResultDataLoopI.getList();
+
+                        if (CollectionUtils.isNotEmpty(listLoopI)) {
+                            requestTestInResultData.getList().addAll(listLoopI);
+                        }
+                    }
+                }
                 return requestTestInResultData.getList();
             }
         }

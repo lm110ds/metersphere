@@ -5,10 +5,10 @@ import io.metersphere.commons.constants.PermissionConstants;
 import io.metersphere.commons.exception.MSException;
 import io.metersphere.commons.utils.PageUtils;
 import io.metersphere.commons.utils.Pager;
+import io.metersphere.controller.handler.annotation.NoResultHolder;
 import io.metersphere.testin.dto.faceMsFront.TestCaseScriptInformationWithEmailDto;
 import io.metersphere.testin.entity.TestCaseScriptInformation;
 import io.metersphere.testin.service.TestCaseScriptInformationService;
-import io.metersphere.testin.util.ResponseEntity;
 import io.metersphere.testin.vo.MsProjectTestinProjectTeamCombinVo;
 import io.metersphere.testin.vo.TestCaseScriptInformationCombinVo;
 import io.metersphere.track.dto.TestCaseDTO;
@@ -21,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,13 +57,13 @@ public class TestCaseScriptInformationController {
         return ResponseEntity.ok(this.testCaseScriptInformationService.queryByPage(testCaseScriptInformation, pageRequest));
     }*/
 
-    @PostMapping("/list/{goPage}/{pageSize}")
+    /*@PostMapping("/list/{goPage}/{pageSize}")
 //    @RequiresPermissions(PermissionConstants.PROJECT_TRACK_CASE_READ)
     public Pager<List<TestCaseScriptInformationCombinVo>> list(@PathVariable int goPage, @PathVariable int pageSize, @Valid @RequestBody TestCaseScriptInformationWithEmailDto request) {
 //    public Map<String, Object> list(@PathVariable int goPage, @PathVariable int pageSize, @Valid @RequestBody TestCaseScriptInformationWithEmailDto request) {
         com.github.pagehelper.Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
         return PageUtils.setPageInfo(page, testCaseScriptInformationService.listTestCaseScriptInformation(goPage, pageSize, request));
-        /*List<TestCaseScriptInformationCombinVo> testCaseScriptInformationCombinVos = testCaseScriptInformationService.listTestCaseScriptInformation(goPage, pageSize, request);
+        *//*List<TestCaseScriptInformationCombinVo> testCaseScriptInformationCombinVos = testCaseScriptInformationService.listTestCaseScriptInformation(goPage, pageSize, request);
         List<TestCaseScriptInformationCombinVo> result3 = new ArrayList<>();
         int start = (goPage - 1) * pageSize;  // 计算起始记录位置
         if (StringUtils.isNotBlank(testCaseScriptInformationCombinVos.getNameOrDescr())){
@@ -86,14 +87,70 @@ public class TestCaseScriptInformationController {
         result.put("totalPages", totalPages);
         result.put("pageNum", goPage);
         result.put("pageSize", pageSize);
-        return result;*/
+        return result;*//*
 //        return PageUtils.setPageInfo(page, testCaseScriptInformationService.listTestCaseScriptInformation(goPage, pageSize, request));
-    }
+    }*/
+    @PostMapping("/listWithAppNameOrScript/{goPage}/{pageSize}")
+    @NoResultHolder
+//    @RequiresPermissions(PermissionConstants.PROJECT_TRACK_CASE_READ)
+    public ResponseEntity listWithAppNameOrScript(@PathVariable int goPage, @PathVariable int pageSize, @Valid @RequestBody TestCaseScriptInformationWithEmailDto request) {
+        List<TestCaseScriptInformationCombinVo> testCaseScriptInformationCombinVos = testCaseScriptInformationService.listWithAppNameOrScriptNameTestCaseScriptInformation(goPage, pageSize, request);
+        List<TestCaseScriptInformationCombinVo> collect = testCaseScriptInformationCombinVos.parallelStream().filter(p ->
+                (StringUtils.isBlank(request.getScriptName()) || (StringUtils.isNotBlank(p.getScriptName())&&p.getScriptName().equals(request.getScriptName()))) &&
+                        (StringUtils.isBlank(request.getAppName()) || (StringUtils.isNotBlank(p.getAppName())&&p.getAppName().equals(request.getAppName())))
+        ).collect(Collectors.toList());
+        // 根据分页参数和匹配的结果，返回调整后的数据
+        int totalItems = collect.size();
+        int totalPages = (int) Math.ceil((double) totalItems / pageSize);
+        int fromIndex = Math.min(goPage * pageSize, totalItems);
+        int toIndex = Math.min((goPage + 1) * pageSize, totalItems);
+        List<TestCaseScriptInformationCombinVo> pagedItems = collect.subList(fromIndex, toIndex);
 
+        // 返回包含分页页码、总数和结果的响应体
+        Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("totalPages", totalPages);
+        responseBody.put("totalItems", totalItems);
+        responseBody.put("pageNumber", goPage);
+        responseBody.put("items", pagedItems);
+        return ResponseEntity.ok(responseBody);
+    }
+    /*@GetMapping("/search")
+    public ResponseEntity<Object> searchItems(@RequestParam(name = "field1", required = false) String field1,
+                                              @RequestParam(name = "field2", required = false) String field2,
+                                              @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
+                                              @RequestParam(name = "pageNumber", defaultValue = "0") int pageNumber) {
+
+        // 从第三方API中获取列表数据(这里使用AWS S3 API为例)
+        List<Object> items = thirdPartyAPI.getItems(field1, field2);
+
+        // 根据请求参数field1和field2进行多个字段精确匹配，找到匹配的结果
+        List<Object> matchedItems = new ArrayList<>();
+        for (Object item : items) {
+            if ((field1 == null || item.getField1().equals(field1)) &&
+                    (field2 == null || item.getField2().equals(field2))) {
+                matchedItems.add(item);
+            }
+        }
+
+        // 根据分页参数和匹配的结果，返回调整后的数据
+        int totalItems = matchedItems.size();
+        int totalPages = (int) Math.ceil((double) totalItems / pageSize);
+        int fromIndex = Math.min(pageNumber * pageSize, totalItems);
+        int toIndex = Math.min((pageNumber + 1) * pageSize, totalItems);
+        List<Object> pagedItems = matchedItems.subList(fromIndex, toIndex);
+
+        // 返回包含分页页码、总数和结果的响应体
+        Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("totalPages", totalPages);
+        responseBody.put("totalItems", totalItems);
+        responseBody.put("pageNumber", pageNumber);
+        responseBody.put("items", pagedItems);
+        return ResponseEntity.ok(responseBody);
+    }*/
     /**
      * 通过主键查询单条数据
      *
-     * @param  主键
+     * @param  testCaseId
      * @return 单条数据
      */
     @GetMapping("/GetTestCaseScriptInformation/{testCaseId}")
