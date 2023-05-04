@@ -68,6 +68,6 @@ public class TestPlanCaseDtoWithResultCategory extends TestPlanCaseDTO {    //Wi
         put("超时", TestPlanTestCaseStatus.Blocking.name());
         put("警告", TestPlanTestCaseStatus.Blocking.name());
         put("环境异常", TestPlanTestCaseStatus.Blocking.name());
-        put("","");
+        put("",TestPlanTestCaseStatus.Prepare.name());
     }};
 }

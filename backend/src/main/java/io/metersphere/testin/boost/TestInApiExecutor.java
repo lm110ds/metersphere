@@ -301,7 +301,7 @@ public class TestInApiExecutor {
         QueryTestInScriptListParameterDataBo response = doPostResponse(requestUrl, queryTheListOfTestingScriptsDto, QueryTestInScriptListParameterDataBo.class);
         if (response.isSuccess()) {
             QueryTestInScriptListParameterDataBo.GetScriptRequestTestInData getScriptRequestTestInData = response.getData();
-            Integer totalPage =getScriptRequestTestInData.getPage();
+            Integer totalPage =getScriptRequestTestInData.getTotalPage();
             List<QueryTestInScriptListParameterDataBo.ScriptInformationResultFromRequest> list = getScriptRequestTestInData.getList();
             if (CollectionUtils.isNotEmpty(list)) {
                 for (QueryTestInScriptListParameterDataBo.ScriptInformationResultFromRequest scriptInformationResultFromRequest : list) {
@@ -352,7 +352,7 @@ public class TestInApiExecutor {
                             .build();
                     QueryTestInScriptListParameterDataBo responseLoopI = doPostResponse(requestUrl, queryTheListOfTestingScriptsDtoLoopI, QueryTestInScriptListParameterDataBo.class);
                     if (responseLoopI.isSuccess()) {
-                        QueryTestInScriptListParameterDataBo.GetScriptRequestTestInData getScriptRequestTestInDataLoopI = response.getData();
+                        QueryTestInScriptListParameterDataBo.GetScriptRequestTestInData getScriptRequestTestInDataLoopI = responseLoopI.getData();
                         List<QueryTestInScriptListParameterDataBo.ScriptInformationResultFromRequest> listLoopI = getScriptRequestTestInDataLoopI.getList();
                         if (CollectionUtils.isNotEmpty(listLoopI)) {
                             for (QueryTestInScriptListParameterDataBo.ScriptInformationResultFromRequest scriptInformationResultFromRequest : listLoopI) {

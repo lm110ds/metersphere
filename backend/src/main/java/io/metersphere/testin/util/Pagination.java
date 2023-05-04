@@ -1,14 +1,16 @@
 package io.metersphere.testin.util;
 
+import org.apache.poi.ss.formula.functions.T;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Pagination {
     // 分页查询方法，根据页面大小和页码，从list中获取指定区间的数据
-    public List<String> getPageList(List<String> list, int pageSize, int pageNo) {
+    public List<T> getPageList(List<T> list, int pageSize, int pageNo) {
         int totalCount = list.size();
         int totalPage = 0;
-        List<String> pageList = new ArrayList<>();
+        List<T> pageList = new ArrayList<T>();
         if (totalCount % pageSize == 0) {
             totalPage = totalCount / pageSize;
         } else {

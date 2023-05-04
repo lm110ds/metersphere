@@ -10,6 +10,7 @@ import io.metersphere.testin.entity.MsProjectTestinProjectTeam;
 import io.metersphere.testin.entity.TestCaseScriptInformation;
 import io.metersphere.testin.service.MsProjectTestinProjectTeamService;
 import io.metersphere.testin.vo.MsProjectTestinProjectTeamCombinVo;
+import io.metersphere.testin.vo.TestCaseScriptInformationCombinVo;
 import io.metersphere.track.service.TestPlanService;
 import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang.StringUtils;
@@ -87,10 +88,28 @@ public class MsProjectTestinProjectTeamController {
 
         int totalPages = (int) Math.ceil((double) result3.size() / pageSize);
         Map<String, Object> result = new HashMap<>();
-        result.put("data", result3);
+//        result.put("data", result3);
+        result.put("totalCount", result3.size());
         result.put("totalPages", totalPages);
-        result.put("pageNum", goPage);
+//        result.put("pageNum", goPage);
+//        result.put("pageSize", pageSize);
+
+        int totalItems = result3.size();
+//        int totalPages = (int) Math.ceil((double) totalItems / pageSize);
+        int fromIndex = Math.min((goPage-1) * pageSize, totalItems);
+        int toIndex = Math.min(goPage * pageSize, totalItems);
+        List<MsProjectTestinProjectTeamCombinVo> pagedItems = result3.subList(fromIndex, toIndex);
+
+        // 返回包含分页页码、总数和结果的响应体
+        Map<String, Object> responseBody = new HashMap<>();
+        result.put("totalPages", totalPages);
+//        responseBody.put("totalItems", totalItems);
+        result.put("pageNumber", goPage);
+//        responseBody.put("items", pagedItems);
+        result.put("data", pagedItems);
+//        responseBody.put("allCount", totalItems);
         result.put("pageSize", pageSize);
+//        return responseBody;
         return result;
 //        return PageUtils.setPageInfo(page, msProjectTestinProjectTeamService.listMsProjectTestinProjectTeam(goPage,pageSize,msProjectTestinProjectTeamWithEmailDto));
     }
@@ -98,7 +117,7 @@ public class MsProjectTestinProjectTeamController {
     /**
      * 通过主键查询单条数据
      *
-     * @param id 主键
+     * @param msProjectId 主键
      * @return 单条数据
      */
     @GetMapping("/GetMsProjectTestinProjectTeam/{msProjectId}")
