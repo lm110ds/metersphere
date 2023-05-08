@@ -13,7 +13,6 @@ import java.io.Serializable;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-//@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class TestCaseScriptInformationScriptDesc extends TestCaseScriptInformation{

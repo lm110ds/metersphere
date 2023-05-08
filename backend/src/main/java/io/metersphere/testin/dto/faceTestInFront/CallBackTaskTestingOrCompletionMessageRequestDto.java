@@ -216,28 +216,15 @@ public class CallBackTaskTestingOrCompletionMessageRequestDto extends BaseDto{
 
     }
 
-/*    @Data
-    public static class CategorySummary {
-        private Integer val;
-        private Integer resultCategory;
-        private String type;
-        private String keyName;
-    }*/
-
     @Data
     public static class SummaryInfo {
         private Integer val;
         private Integer resultCategory;
         private String type;
         private String keyName;
-//        private List<CategorySummary> categorySummary;
-    }
-    /*public class Devices {
 
     }
-    public class Scripts {
 
-    }*/
 }
 
 

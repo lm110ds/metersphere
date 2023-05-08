@@ -13,15 +13,9 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class TestPlanTestInTaskTokenReqIdCallbackUrlVo implements Serializable {
 
-//    private String callbackUrl;
-//    private String openTheTestingPageUrl;
     /**
      * testIn项目组ID
      */
-//    @NotNull(message = "项目组ID不能为空")
-//    private Integer testInProjectId;
-
-//    @NotBlank(message = "项目组名称不能为空")
     private String Token;
     private String gotoUrl;
 

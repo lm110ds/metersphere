@@ -36,46 +36,5 @@ public class TestPlanTestinTask implements Serializable {
 
     private String summaryinfo;
 
-
-    public String getTestPlanId() {
-        return testPlanId;
-    }
-
-    public void setTestPlanId(String testPlanId) {
-        this.testPlanId = testPlanId;
-    }
-
-    public String getTaskid() {
-        return taskid;
-    }
-
-    public void setTaskid(String taskid) {
-        this.taskid = taskid;
-    }
-
-    public Integer getTestInProjectid() {
-        return testInProjectid;
-    }
-
-    public void setTestInProjectid(Integer testInProjectid) {
-        this.testInProjectid = testInProjectid;
-    }
-
-    public String getExecStandard() {
-        return execStandard;
-    }
-
-    public void setExecStandard(String execStandard) {
-        this.execStandard = execStandard;
-    }
-
-    public String getSummaryinfo() {
-        return summaryinfo;
-    }
-
-    public void setSummaryinfo(String summaryinfo) {
-        this.summaryinfo = summaryinfo;
-    }
-
 }
 

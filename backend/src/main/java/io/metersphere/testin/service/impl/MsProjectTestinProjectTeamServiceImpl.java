@@ -80,7 +80,6 @@ public class MsProjectTestinProjectTeamServiceImpl implements MsProjectTestinPro
     public MsProjectTestinProjectTeam update(MsProjectTestinProjectTeam msProjectTestinProjectTeam) {
         this.msProjectTestinProjectTeamDao.update(msProjectTestinProjectTeam);
         return this.queryById();
-//        return this.queryById(msProjectTestinProjectTeam.get());
     }
 
     /**
@@ -96,18 +95,6 @@ public class MsProjectTestinProjectTeamServiceImpl implements MsProjectTestinPro
     @Override
     public List<MsProjectTestinProjectTeamCombinVo> listMsProjectTestinProjectTeam(Integer goPage, Integer pageSize, MsProjectTestinProjectTeamWithEmailDto msProjectTestinProjectTeamWithEmailDto) {
         List<MsProjectTestinProjectTeamCombinVo> result=new ArrayList<>();
-/*        MsProjectTestinProjectTeam msProjectTestinProjectTeam =MsProjectTestinProjectTeam.builder()
-                .msProjectId(msProjectTestinProjectTeamWithEmailDto.getMsProjectId())
-                .testInProjectId(msProjectTestinProjectTeamWithEmailDto.getTestInProjectId())
-                .eid(msProjectTestinProjectTeamWithEmailDto.getEid())
-                .name(msProjectTestinProjectTeamWithEmailDto.getName())
-                .thirdPartyProjectid(msProjectTestinProjectTeamWithEmailDto.getThirdPartyProjectid())
-                .status(msProjectTestinProjectTeamWithEmailDto.getStatus())
-                .createTime(msProjectTestinProjectTeamWithEmailDto.getCreateTime())
-                .descr(msProjectTestinProjectTeamWithEmailDto.getDescr())
-                .extend(msProjectTestinProjectTeamWithEmailDto.getExtend())
-                .productNo(msProjectTestinProjectTeamWithEmailDto.getProductNo())
-                .build();*/
         MsProjectTestinProjectTeamNameOrDescr msProjectTestinProjectTeamNameOrDescr =new MsProjectTestinProjectTeamNameOrDescr();
         msProjectTestinProjectTeamNameOrDescr.setMsProjectId(msProjectTestinProjectTeamWithEmailDto.getMsProjectId());
         msProjectTestinProjectTeamNameOrDescr.setTestInProjectId(msProjectTestinProjectTeamWithEmailDto.getTestInProjectId());
@@ -119,7 +106,6 @@ public class MsProjectTestinProjectTeamServiceImpl implements MsProjectTestinPro
         msProjectTestinProjectTeamNameOrDescr.setProductNo(msProjectTestinProjectTeamWithEmailDto.getProductNo());
         msProjectTestinProjectTeamNameOrDescr.setNameOrDescr(msProjectTestinProjectTeamWithEmailDto.getNameOrDescr());
 
-//        List<MsProjectTestinProjectTeam> msProjectTestInProjectTeams = this.msProjectTestinProjectTeamDao.queryAll(msProjectTestinProjectTeam);
         List<MsProjectTestinProjectTeam> msProjectTestInProjectTeams = this.msProjectTestinProjectTeamDao.queryNameOrDesc(msProjectTestinProjectTeamNameOrDescr);
         List<MsProjectTestinProjectTeam> msProjectTestInProjectTeamsFromQueryTestIn = testInApiExecutor.msProjectTestInProjectTeamsFromQueryTestIn(goPage, pageSize, msProjectTestinProjectTeamWithEmailDto);
         if (CollectionUtils.isNotEmpty(msProjectTestInProjectTeams)) {

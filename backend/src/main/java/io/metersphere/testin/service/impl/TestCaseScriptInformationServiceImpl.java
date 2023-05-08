@@ -81,7 +81,6 @@ public class TestCaseScriptInformationServiceImpl implements TestCaseScriptInfor
     @Override
     public Boolean insert(TestCaseScriptInformation testCaseScriptInformation) {
         return this.testCaseScriptInformationDao.insert(testCaseScriptInformation)>0;
-        //return testCaseScriptInformation;
     }
 
     /**
@@ -95,7 +94,6 @@ public class TestCaseScriptInformationServiceImpl implements TestCaseScriptInfor
     @Override
     public Boolean update(TestCaseScriptInformation testCaseScriptInformation) {
         return this.testCaseScriptInformationDao.update(testCaseScriptInformation)>0;
-        //return this.queryById();
     }
 
     /**
@@ -127,20 +125,6 @@ public class TestCaseScriptInformationServiceImpl implements TestCaseScriptInfor
         }else {
             MsProjectTestinProjectTeam msProjectTestinProjectTeam = msProjectTestinProjectTeamDao.queryIsHaveTestInProjectTeamByIdMsProject(msProjectId);
             if (msProjectTestinProjectTeam.getTestInProjectId() != null) {
-                /*TestCaseScriptInformation testCaseScriptInformation=TestCaseScriptInformation.builder()
-                        .testCaseId(testCaseScriptInformationWithEmailDto.getTestCaseId())
-                        .scriptNo(testCaseScriptInformationWithEmailDto.getScriptNo())
-                        .scriptId(testCaseScriptInformationWithEmailDto.getScriptId())
-                        .scriptCreateUser(testCaseScriptInformationWithEmailDto.getScriptCreateUser())
-                        .scriptCreateDesc(testCaseScriptInformationWithEmailDto.getScriptCreateDesc())
-                        .testInProjectId(testCaseScriptInformationWithEmailDto.getTestInProjectId())
-                        .scriptUpdateUserid(testCaseScriptInformationWithEmailDto.getScriptUpdateUserid())
-                        .scriptUpdateDesc(testCaseScriptInformationWithEmailDto.getScriptUpdateDesc())
-                        .channelId(testCaseScriptInformationWithEmailDto.getChannelId())
-                        .scriptCreateTime(testCaseScriptInformationWithEmailDto.getScriptCreateTime())
-                        .scriptUpdateTime(testCaseScriptInformationWithEmailDto.getScriptUpdateTime())
-                        .appName(testCaseScriptInformationWithEmailDto.getAppName())
-                        .build();*/
                 TestCaseScriptInformationScriptDesc testCaseScriptInformationScriptDesc=new TestCaseScriptInformationScriptDesc();
                 testCaseScriptInformationScriptDesc.setScriptDesc(testCaseScriptInformationWithEmailDto.getScriptDesc());
                 testCaseScriptInformationScriptDesc.setTestCaseId(testCaseScriptInformationWithEmailDto.getTestCaseId());
@@ -154,19 +138,16 @@ public class TestCaseScriptInformationServiceImpl implements TestCaseScriptInfor
                 testCaseScriptInformationScriptDesc.setScriptUpdateTime(testCaseScriptInformationWithEmailDto.getScriptUpdateTime());
                 testCaseScriptInformationScriptDesc.setAppName(testCaseScriptInformationWithEmailDto.getAppName());
 
-//                List<TestCaseScriptInformation> msTestCaseScriptInformationFromDb = this.testCaseScriptInformationDao.queryAll(testCaseScriptInformation);
                 List<TestCaseScriptInformation> msTestCaseScriptInformationFromDb = this.testCaseScriptInformationDao.queryScriptDesc(testCaseScriptInformationScriptDesc);
 
                 List<TestCaseScriptInformation> msTestCaseScriptInformationFromQueryTestIn = testInApiExecutor.queryTestCaseScriptInformationFromQueryTestIn(goPage, pageSize, msProjectTestinProjectTeam.getTestInProjectId(),testCaseScriptInformationWithEmailDto);
 
                 if (CollectionUtils.isNotEmpty(msTestCaseScriptInformationFromDb)) {
                     if (CollectionUtils.isNotEmpty(msTestCaseScriptInformationFromQueryTestIn)) {
-                        //包装，返从testIn那边查到的结果和数据查的结果并级
                         result= msTestCaseScriptInformationFromQueryTestInWrap(msTestCaseScriptInformationFromDb.get(0),msTestCaseScriptInformationFromQueryTestIn);
                     }
                 }else{
                     if (CollectionUtils.isNotEmpty(msTestCaseScriptInformationFromQueryTestIn)) {
-                        //包装，直接返从testIn那边查到的结果
                         result= msTestCaseScriptInformationFromQueryTestInStraight(msTestCaseScriptInformationFromQueryTestIn);
                     }
                 }
@@ -187,20 +168,6 @@ public class TestCaseScriptInformationServiceImpl implements TestCaseScriptInfor
         }else {
             MsProjectTestinProjectTeam msProjectTestinProjectTeam = msProjectTestinProjectTeamDao.queryIsHaveTestInProjectTeamByIdMsProject(msProjectId);
             if (msProjectTestinProjectTeam.getTestInProjectId() != null) {
-                /*TestCaseScriptInformation testCaseScriptInformation=TestCaseScriptInformation.builder()
-                        .testCaseId(testCaseScriptInformationWithEmailDto.getTestCaseId())
-                        .scriptNo(testCaseScriptInformationWithEmailDto.getScriptNo())
-                        .scriptId(testCaseScriptInformationWithEmailDto.getScriptId())
-                        .scriptCreateUser(testCaseScriptInformationWithEmailDto.getScriptCreateUser())
-                        .scriptCreateDesc(testCaseScriptInformationWithEmailDto.getScriptCreateDesc())
-                        .testInProjectId(testCaseScriptInformationWithEmailDto.getTestInProjectId())
-                        .scriptUpdateUserid(testCaseScriptInformationWithEmailDto.getScriptUpdateUserid())
-                        .scriptUpdateDesc(testCaseScriptInformationWithEmailDto.getScriptUpdateDesc())
-                        .channelId(testCaseScriptInformationWithEmailDto.getChannelId())
-                        .scriptCreateTime(testCaseScriptInformationWithEmailDto.getScriptCreateTime())
-                        .scriptUpdateTime(testCaseScriptInformationWithEmailDto.getScriptUpdateTime())
-                        .appName(testCaseScriptInformationWithEmailDto.getAppName())
-                        .build();*/
                 TestCaseScriptInformationScriptDesc testCaseScriptInformationScriptDesc=new TestCaseScriptInformationScriptDesc();
                 testCaseScriptInformationScriptDesc.setScriptDesc(testCaseScriptInformationWithEmailDto.getScriptDesc());
                 testCaseScriptInformationScriptDesc.setTestCaseId(testCaseScriptInformationWithEmailDto.getTestCaseId());
@@ -215,19 +182,16 @@ public class TestCaseScriptInformationServiceImpl implements TestCaseScriptInfor
                 testCaseScriptInformationScriptDesc.setAppName(testCaseScriptInformationWithEmailDto.getAppName());
                 testCaseScriptInformationScriptDesc.setScriptName(testCaseScriptInformationWithEmailDto.getScriptName());
 
-//                List<TestCaseScriptInformation> msTestCaseScriptInformationFromDb = this.testCaseScriptInformationDao.queryAll(testCaseScriptInformation);
                 List<TestCaseScriptInformation> msTestCaseScriptInformationFromDb = this.testCaseScriptInformationDao.queryScriptDesc(testCaseScriptInformationScriptDesc);
 
                 List<TestCaseScriptInformation> msTestCaseScriptInformationFromQueryTestIn = testInApiExecutor.queryTestCaseScriptInformationFromQueryTestIn(goPage, pageSize, msProjectTestinProjectTeam.getTestInProjectId(),testCaseScriptInformationWithEmailDto);
 
                 if (CollectionUtils.isNotEmpty(msTestCaseScriptInformationFromDb)) {
                     if (CollectionUtils.isNotEmpty(msTestCaseScriptInformationFromQueryTestIn)) {
-                        //包装，返从testIn那边查到的结果和数据查的结果并级
                         result= msTestCaseScriptInformationFromQueryTestInWrap(msTestCaseScriptInformationFromDb.get(0),msTestCaseScriptInformationFromQueryTestIn);
                     }
                 }else{
                     if (CollectionUtils.isNotEmpty(msTestCaseScriptInformationFromQueryTestIn)) {
-                        //包装，直接返从testIn那边查到的结果
                         result= msTestCaseScriptInformationFromQueryTestInStraight(msTestCaseScriptInformationFromQueryTestIn);
                     }
                 }

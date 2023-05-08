@@ -21,8 +21,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class EmailDto implements Serializable {
     //2.4 test ms front
-/*    @Valid
-    @NotBlank(message = "testCaseId cannot be empty")*/
     private String email;
     private static final long serialVersionUID = 385794188289146681L;
 

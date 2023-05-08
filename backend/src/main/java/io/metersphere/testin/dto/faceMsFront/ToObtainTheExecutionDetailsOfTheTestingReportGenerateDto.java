@@ -13,7 +13,6 @@ public class ToObtainTheExecutionDetailsOfTheTestingReportGenerateDto extends Ba
     private Integer projectid;
     private String taskid;
     private String testPlanId;
-    //sid
     private String token;
 
 }

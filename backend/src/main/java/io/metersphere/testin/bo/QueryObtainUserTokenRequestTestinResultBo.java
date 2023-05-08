@@ -31,28 +31,8 @@ public class QueryObtainUserTokenRequestTestinResultBo implements Serializable {
     @Data
     public static class RequestTestInResultData {
         private String result;
-       /*private Integer totalRow;
-
-        private Integer totalPage;
-
-        private Integer pageSize;
-
-        private Integer page;
-
-        private List<TestInProjectGroup> list;*/
-
-
     }
-    /*@Data
-    public static class TestInProjectGroup {
-        private Integer eid;
-        private Long createTime;
-        private String name;
-        @SerializedName(value="projectid",alternate={"testInProjectId"})
-        private Integer projectid;
-        private Integer status;
-        private String thirdPartyProjectid;
-    }*/
+
     public boolean isSuccess() {
         return Objects.equals(code, 0);
     }
